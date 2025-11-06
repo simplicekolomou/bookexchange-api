@@ -26,7 +26,7 @@ public class ApiConfiguration {
     public DataSource dataSource() {
         DataSourceBuilder dsBuilder = DataSourceBuilder.create();
         dsBuilder.url(environment.getProperty("db.url", "jdbc:postgresql://localhost:5432/postgres"));
-        dsBuilder.driverClassName(environment.getProperty("db.driver.class-name","org.postgresql.Driver"));
+        dsBuilder.driverClassName(environment.getProperty("db.driver.class.name","org.postgresql.Driver"));
         dsBuilder.username(environment.getProperty("db.username", "postgres"));
         dsBuilder.password(environment.getProperty("db.password", "password"));
         return dsBuilder.build();
