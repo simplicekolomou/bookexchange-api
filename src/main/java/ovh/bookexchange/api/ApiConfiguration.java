@@ -25,18 +25,17 @@ public class ApiConfiguration {
     @Bean
     public DataSource dataSource() {
         DataSourceBuilder dsBuilder = DataSourceBuilder.create();
-        dsBuilder.url(environment.getProperty("db-url", "jdbc:postgresql://localhost:5432/postgres"));
-        dsBuilder.driverClassName(environment.getProperty("db-driver-class-name","org.postgresql.Driver"));
-        dsBuilder.username(environment.getProperty("db-username", "postgres"));
-        dsBuilder.password(environment.getProperty("db-password", "password"));
+        dsBuilder.url(environment.getProperty("db.url", "jdbc:postgresql://localhost:5432/postgres"));
+        dsBuilder.driverClassName(environment.getProperty("db.driver.class-name","org.postgresql.Driver"));
+        dsBuilder.username(environment.getProperty("db.username", "postgres"));
+        dsBuilder.password(environment.getProperty("db.password", "password"));
         return dsBuilder.build();
     }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setGenerateDdl(environment.getProperty("db-ddl-auto", Boolean.class, false));
-
+        vendorAdapter.setGenerateDdl(environment.getProperty("db.ddl.auto", Boolean.class, false));
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("ovh.bookexchange.api.domains.entities");
