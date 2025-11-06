@@ -23,6 +23,11 @@ public class ApiConfiguration {
     private Environment environment;
 
     @Bean
+    public Environment environment() {
+        return environment;
+    }
+
+    @Bean
     public DataSource dataSource() {
         DataSourceBuilder dsBuilder = DataSourceBuilder.create();
         dsBuilder.url(environment.getProperty("db.url", "jdbc:postgresql://localhost:5432/postgres"));
