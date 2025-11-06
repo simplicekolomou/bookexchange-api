@@ -15,7 +15,7 @@ public class TestEntity implements Serializable {
 
     private String value;
 
-    public TestEntity() {}
+    public TestEntity() {} //créé pour que l'orm puisse initialiser les objets, faut voir si l'enlever casse toujours
 
     public TestEntity(String value) {
         this.value = value;
@@ -32,5 +32,9 @@ public class TestEntity implements Serializable {
 
     public String getValue() {
         return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

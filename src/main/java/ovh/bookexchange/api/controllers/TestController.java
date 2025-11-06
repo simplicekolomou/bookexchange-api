@@ -20,9 +20,22 @@ public class TestController {
     }
 
     @PostMapping("/test")
-    void newTest(@RequestBody TestRepresentation value) {
-        repository.save(new TestEntity(value.value));
+    TestEntity newTest(@RequestBody TestRepresentation value) {
+        return repository.save(new TestEntity(value.value));
     }
 
+    @PutMapping("/test/{id}")
+    TestEntity replaceTestEntity(@RequestBody TestRepresentation value, @PathVariable long id) {
+        return repository.findById(id).map(testEntity -> {
+            testEntity.setValue(value.value);
+            return repository.save(testEntity);
+        }).orElseGet(()->{
+            return repository.save(new TestEntity(value.value));
+        });
+    }
 
+    @DeleteMapping("/test/{id}")
+    void deleteTestEntity(@PathVariable long id) {
+        repository.deleteById(id);
+    }
 }
