@@ -1,0 +1,690 @@
+{
+  "kind": "books#volumes",
+  "totalItems": 1000000,
+  "items": [
+    {
+      "kind": "books#volume",
+      "id": "CR23QgAACAAJ",
+      "etag": "F2zOlRQIGhs",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/CR23QgAACAAJ",
+      "volumeInfo": {
+        "title": "Flowers for Algernon",
+        "authors": [
+          "Daniel Keyes"
+        ],
+        "publishedDate": "1966",
+        "description": "A brain operation changes a retarded adult into a genius.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "055324504X"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9780553245042"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 216,
+        "printType": "BOOK",
+        "categories": [
+          "Brain"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "language": "en",
+        "previewLink": "http://books.google.be/books?id=CR23QgAACAAJ&dq=flowers+inauthor:keyes&hl=&cd=1&source=gbs_api",
+        "infoLink": "http://books.google.be/books?id=CR23QgAACAAJ&dq=flowers+inauthor:keyes&hl=&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Flowers_for_Algernon.html?hl=&id=CR23QgAACAAJ"
+      },
+      "saleInfo": {
+        "country": "BE",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BE",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=CR23QgAACAAJ&hl=&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "A brain operation changes a retarded adult into a genius."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "rUPPPQAACAAJ",
+      "etag": "t182nMX9MSM",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/rUPPPQAACAAJ",
+      "volumeInfo": {
+        "title": "Flowers for Algernon (Pack of 16)",
+        "authors": [
+          "Daniel Keyes"
+        ],
+        "publisher": "Vintage",
+        "publishedDate": "1990-08",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "0435129600"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9780435129606"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "printType": "BOOK",
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "language": "en",
+        "previewLink": "http://books.google.be/books?id=rUPPPQAACAAJ&dq=flowers+inauthor:keyes&hl=&cd=2&source=gbs_api",
+        "infoLink": "http://books.google.be/books?id=rUPPPQAACAAJ&dq=flowers+inauthor:keyes&hl=&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Flowers_for_Algernon_Pack_of_16.html?hl=&id=rUPPPQAACAAJ"
+      },
+      "saleInfo": {
+        "country": "BE",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BE",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=rUPPPQAACAAJ&hl=&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "JLunPwAACAAJ",
+      "etag": "1OSeB/qBtBo",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/JLunPwAACAAJ",
+      "volumeInfo": {
+        "title": "Flowers for Algernon",
+        "authors": [
+          "Daniel Keyes"
+        ],
+        "publisher": "Heinemann Educational Publishers",
+        "publishedDate": "1989",
+        "description": "Traditional Chinese edition of Flowers for Algernon, the Daniel Keyes classic. Charlie, a simple young man who was born with a very low IQ, became a perfect subject for an experimental surgery to improve his intelligence, an experiment that was successful for Algernon, a mouse A novella that won the Hugo Award in 1960 and the Nebula in 1966 and inspired the film Charly for which Cliff Robertson received an Oscar for Best Actor in 1969. In Chinese. Distributed by Tsai Fong Books, Inc.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "0435123432"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9780435123437"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 218,
+        "printType": "BOOK",
+        "categories": [
+          "People with mental disabilities"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=JLunPwAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=JLunPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        },
+        "language": "en",
+        "previewLink": "http://books.google.be/books?id=JLunPwAACAAJ&dq=flowers+inauthor:keyes&hl=&cd=3&source=gbs_api",
+        "infoLink": "http://books.google.be/books?id=JLunPwAACAAJ&dq=flowers+inauthor:keyes&hl=&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Flowers_for_Algernon.html?hl=&id=JLunPwAACAAJ"
+      },
+      "saleInfo": {
+        "country": "BE",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BE",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=JLunPwAACAAJ&hl=&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "With more than five million copies sold, Flowers for Algernon is the beloved, classic story of a mentally disabled man whose experimental quest for intelligence mirrors that of Algernon, an extraordinary lab mouse."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "F1wgqlNi8AMC",
+      "etag": "CYWN2LeaVV4",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/F1wgqlNi8AMC",
+      "volumeInfo": {
+        "title": "Flowers for Algernon",
+        "subtitle": "Full",
+        "authors": [
+          "David Rogers",
+          "Daniel Keyes"
+        ],
+        "publisher": "Dramatic Publishing",
+        "publishedDate": "1969",
+        "description": "The compelling story of Charlie Gordon, willing victim of a strange experiment - a moron, a genius, a man in search of himself. Poignant, funny, tragic, but with a hope for the indomitable spirit of man, this unusual play tells a story you will long remember. It also offers a magnificent role.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "0871295377"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9780871295378"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": true
+        },
+        "pageCount": 124,
+        "printType": "BOOK",
+        "categories": [
+          "Juvenile Fiction"
+        ],
+        "averageRating": 5,
+        "ratingsCount": 1,
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "0.9.9.0.preview.1",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=F1wgqlNi8AMC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=F1wgqlNi8AMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+        },
+        "language": "en",
+        "previewLink": "http://books.google.be/books?id=F1wgqlNi8AMC&printsec=frontcover&dq=flowers+inauthor:keyes&hl=&cd=4&source=gbs_api",
+        "infoLink": "http://books.google.be/books?id=F1wgqlNi8AMC&dq=flowers+inauthor:keyes&hl=&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Flowers_for_Algernon.html?hl=&id=F1wgqlNi8AMC"
+      },
+      "saleInfo": {
+        "country": "BE",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BE",
+        "viewability": "PARTIAL",
+        "embeddable": true,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.be/books/download/Flowers_for_Algernon-sample-pdf.acsm?id=F1wgqlNi8AMC&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=F1wgqlNi8AMC&hl=&source=gbs_api",
+        "accessViewStatus": "SAMPLE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "The compelling story of Charlie Gordon, willing victim of a strange experiment - a moron, a genius, a man in search of himself."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "64tuPwAACAAJ",
+      "etag": "wj+WUi6g4QU",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/64tuPwAACAAJ",
+      "volumeInfo": {
+        "title": "Flowers for Algernon",
+        "authors": [
+          "Daniel Keyes"
+        ],
+        "publisher": "Gollancz",
+        "publishedDate": "2000",
+        "description": "The classic novel about a daring experiment in human intelligence Charlie Gordon, IQ 68, is a floor sweeper and the gentle butt of everyone's jokes - until an experiment in the enhancement of human intelligence turns him into a genius. But then Algernon, the mouse whose triumphal experimental tranformation preceded his, fades and dies, and Charlie has to face the possibility that his salvation was only temporary.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "1857989384"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9781857989380"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 216,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=64tuPwAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=64tuPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        },
+        "language": "en",
+        "previewLink": "http://books.google.be/books?id=64tuPwAACAAJ&dq=flowers+inauthor:keyes&hl=&cd=5&source=gbs_api",
+        "infoLink": "http://books.google.be/books?id=64tuPwAACAAJ&dq=flowers+inauthor:keyes&hl=&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Flowers_for_Algernon.html?hl=&id=64tuPwAACAAJ"
+      },
+      "saleInfo": {
+        "country": "BE",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BE",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=64tuPwAACAAJ&hl=&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "The classic novel about a daring experiment in human intelligence Charlie Gordon, IQ 68, is a floor sweeper and the gentle butt of everyone&#39;s jokes - until an experiment in the enhancement of human intelligence turns him into a genius."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "9ygPPQAACAAJ",
+      "etag": "Uo7jQU6ca3I",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/9ygPPQAACAAJ",
+      "volumeInfo": {
+        "title": "Flores para Algernon",
+        "authors": [
+          "Daniel Keyes"
+        ],
+        "publisher": "Lectorum Publications",
+        "publishedDate": "2004",
+        "description": "After a mouse gets out of a maze faster than he does, mentally handicapped Charlie Gordon volunteers for an experiment to enhance his brainpower. Soon he goes from an IQ of 68 to genius level and beyond. Only now does Charlie feel that to be mentally handicapped was to be different. And the experiment is running into trouble. This touching, must-read story is finally available in Spanish.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "8467503483"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9788467503487"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 0,
+        "printType": "BOOK",
+        "categories": [
+          "Brain"
+        ],
+        "averageRating": 5,
+        "ratingsCount": 1,
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=9ygPPQAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=9ygPPQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        },
+        "language": "es",
+        "previewLink": "http://books.google.be/books?id=9ygPPQAACAAJ&dq=flowers+inauthor:keyes&hl=&cd=6&source=gbs_api",
+        "infoLink": "http://books.google.be/books?id=9ygPPQAACAAJ&dq=flowers+inauthor:keyes&hl=&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Flores_para_Algernon.html?hl=&id=9ygPPQAACAAJ"
+      },
+      "saleInfo": {
+        "country": "BE",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BE",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=9ygPPQAACAAJ&hl=&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "After a mouse gets out of a maze faster than he does, mentally handicapped Charlie Gordon volunteers for an experiment to enhance his brainpower."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "xYK5oAEACAAJ",
+      "etag": "FwpryXlZCVo",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/xYK5oAEACAAJ",
+      "volumeInfo": {
+        "title": "Flowers for Algernon - Multiple Critical Perspectives",
+        "authors": [
+          "Daniel Keyes"
+        ],
+        "publishedDate": "2011-01-01",
+        "description": "Probe the depth and richness of your favorite titles and usher your students into an understanding of what really made us want to teach literature in the first place. Each guide offers clear and concise explanations of three different critical perspectives.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "1935467964"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9781935467960"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "printType": "BOOK",
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "language": "en",
+        "previewLink": "http://books.google.be/books?id=xYK5oAEACAAJ&dq=flowers+inauthor:keyes&hl=&cd=7&source=gbs_api",
+        "infoLink": "http://books.google.be/books?id=xYK5oAEACAAJ&dq=flowers+inauthor:keyes&hl=&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Flowers_for_Algernon_Multiple_Critical_P.html?hl=&id=xYK5oAEACAAJ"
+      },
+      "saleInfo": {
+        "country": "BE",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BE",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=xYK5oAEACAAJ&hl=&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "Probe the depth and richness of your favorite titles and usher your students into an understanding of what really made us want to teach literature in the first place."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "gK98gXR8onwC",
+      "etag": "WegpImx2pIE",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/gK98gXR8onwC",
+      "volumeInfo": {
+        "title": "Flowers for Algernon",
+        "subtitle": "One Act",
+        "authors": [
+          "David Rogers",
+          "Daniel Keyes"
+        ],
+        "publisher": "Dramatic Publishing",
+        "publishedDate": "1969",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "0871293870"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9780871293879"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": true
+        },
+        "pageCount": 36,
+        "printType": "BOOK",
+        "categories": [
+          "Drama"
+        ],
+        "averageRating": 5,
+        "ratingsCount": 1,
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "0.4.5.0.preview.1",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=gK98gXR8onwC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=gK98gXR8onwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+        },
+        "language": "en",
+        "previewLink": "http://books.google.be/books?id=gK98gXR8onwC&printsec=frontcover&dq=flowers+inauthor:keyes&hl=&cd=8&source=gbs_api",
+        "infoLink": "http://books.google.be/books?id=gK98gXR8onwC&dq=flowers+inauthor:keyes&hl=&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Flowers_for_Algernon.html?hl=&id=gK98gXR8onwC"
+      },
+      "saleInfo": {
+        "country": "BE",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BE",
+        "viewability": "PARTIAL",
+        "embeddable": true,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.be/books/download/Flowers_for_Algernon-sample-pdf.acsm?id=gK98gXR8onwC&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=gK98gXR8onwC&hl=&source=gbs_api",
+        "accessViewStatus": "SAMPLE",
+        "quoteSharingAllowed": false
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "Xm-u0AEACAAJ",
+      "etag": "CLWmUfaZu9Y",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/Xm-u0AEACAAJ",
+      "volumeInfo": {
+        "title": "Flowers for Algernon",
+        "subtitle": "A Modern Literary Classic",
+        "authors": [
+          "Daniel Keyes"
+        ],
+        "publisher": "Weidenfeld & Nicolson",
+        "publishedDate": "2017-07-13",
+        "description": "'A masterpiece of poignant brilliance . . . heartbreaking' Guardian Charlie Gordon, a floor sweeper born with an unusually low IQ, has been chosen as the perfect subject for an experimental surgery that doctors hope will increase his intelligence - a procedure that has been highly successful when tested on a lab mouse named Algernon. All Charlie wants is to be smart and have friends, but the treatement turns him into a genius. Then Algernon begins to fade. What will become of Charlie?",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "1474605737"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9781474605731"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 0,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=Xm-u0AEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=Xm-u0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        },
+        "language": "en",
+        "previewLink": "http://books.google.be/books?id=Xm-u0AEACAAJ&dq=flowers+inauthor:keyes&hl=&cd=9&source=gbs_api",
+        "infoLink": "http://books.google.be/books?id=Xm-u0AEACAAJ&dq=flowers+inauthor:keyes&hl=&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Flowers_for_Algernon.html?hl=&id=Xm-u0AEACAAJ"
+      },
+      "saleInfo": {
+        "country": "BE",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BE",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=Xm-u0AEACAAJ&hl=&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "With over five million copies sold, Flowers for Algernon is a beloved American classic about a man who receives an operation that turns him into a genius and introduces him to heartache."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "uCqioAEACAAJ",
+      "etag": "jP1f40QSXCM",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/uCqioAEACAAJ",
+      "volumeInfo": {
+        "title": "Flowers for Algernon - Downloadable Multiple Critical Perspectives",
+        "authors": [
+          "Daniel Keyes"
+        ],
+        "publishedDate": "2011-01-01",
+        "description": "Probe the depth and richness of your favorite titles and usher your students into an understanding of what really made us want to teach literature in the first place. Each guide offers clear and concise explanations of three different critical perspectives.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "1935467972"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9781935467977"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "printType": "BOOK",
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "language": "en",
+        "previewLink": "http://books.google.be/books?id=uCqioAEACAAJ&dq=flowers+inauthor:keyes&hl=&cd=10&source=gbs_api",
+        "infoLink": "http://books.google.be/books?id=uCqioAEACAAJ&dq=flowers+inauthor:keyes&hl=&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Flowers_for_Algernon_Downloadable_Multip.html?hl=&id=uCqioAEACAAJ"
+      },
+      "saleInfo": {
+        "country": "BE",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BE",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=uCqioAEACAAJ&hl=&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "Probe the depth and richness of your favorite titles and usher your students into an understanding of what really made us want to teach literature in the first place."
+      }
+    }
+  ]
+}
