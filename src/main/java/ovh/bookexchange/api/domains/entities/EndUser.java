@@ -31,14 +31,14 @@ public class EndUser {
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     private List<Message> messages;
 
+    @OneToMany(mappedBy = "endUser")
+    private List<Payement> payements;
+
     @OneToMany
     private List<BookCopy> collection;
 
-    @OneToMany
+    @ManyToMany
     private List<Book> whisedList;
-
-
-
 
     @ManyToMany
     private List<EndUser> friends;

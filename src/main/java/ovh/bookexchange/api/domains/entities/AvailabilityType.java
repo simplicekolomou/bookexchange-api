@@ -4,5 +4,5 @@ public enum AvailabilityType {
     NONE,
     FOR_SALE,
     FOR_TRADE,
-    FOR_FREE
+    FOR_GIFT
 }
