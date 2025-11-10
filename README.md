@@ -11,6 +11,8 @@ la variable DB_DDL_AUTO permet d'appliquer le schéma de DB qui provient des ent
 ```bash
 set DB_DDL_AUTO=true
 ```
+Ou si vous utilisez intelliJ,
+vous pouvez modifier les variables d'environement dans la configuration de lancement de la tâche bootRun.
 ### 3. Lancer l'api
 ```bash
 ./gradlew bootRun
