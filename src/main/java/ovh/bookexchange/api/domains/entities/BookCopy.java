@@ -1,6 +1,7 @@
 package ovh.bookexchange.api.domains.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,8 +17,10 @@ public class BookCopy {
     @Setter(AccessLevel.NONE)
     private long id;
 
+    @NotNull
     private PhysicalState physicalState;
 
+    @NotNull
     private AvailabilityType availabilityType;
 
     @ManyToOne
@@ -25,5 +28,6 @@ public class BookCopy {
     private Book book;
 
     @OneToMany(mappedBy = "bookCopy", cascade = CascadeType.ALL)
+    @NotNull
     private List<WarehouseItem> warehouseItems;
 }

@@ -1,6 +1,7 @@
 package ovh.bookexchange.api.domains.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,9 +14,11 @@ public class WarehouseItem {
     @Setter(lombok.AccessLevel.NONE)
     private long id;
 
+    @NotNull
     private ItemStatus itemStatus;
 
-    private String locationSlot;
+    @NotNull
+    private String locationSlot; //peut être une chaîne vide si le livre est arrivé ou parti.
 
     @ManyToOne
     @JoinColumn(nullable=false, updatable = false)
