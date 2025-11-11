@@ -16,6 +16,6 @@ public class RegisterRequest {
     @Size(max=255, message = "First name must be less than 256 characters")
     private String firstName;
     @NotBlank(message = "Last name is required")
-    @Size(max=255, message = "Last name must be less than 256 characters")
+    @Size(min=1, max=255, message = "Last name must be less than 256 characters")
     private String lastName;
 }

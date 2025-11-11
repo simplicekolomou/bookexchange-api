@@ -5,9 +5,8 @@
 cd dev-db
 docker compose up
 ```
-### 2. Optionellement mettre des variables d'environment
-la variable DB_DDL_AUTO permet d'appliquer le schéma de DB qui provient des entités. Sa valeur par défault est 'false' mais elle peut être mise à 'true'
-!!! à ne pas le faire sur la prod.
+### 2. Mettre les variables d'environment
+Se référer au fichier .env.example pour les variables de dev.
 ```bash
 set DB_DDL_AUTO=true
 ```
