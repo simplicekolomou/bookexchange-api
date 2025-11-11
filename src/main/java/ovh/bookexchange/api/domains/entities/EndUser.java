@@ -41,7 +41,6 @@ public class EndUser {
     private String bio;
 
     @Embedded
-    @NotNull
     private Adress adress;
 
     @OneToMany(mappedBy = "endUsers")

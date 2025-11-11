@@ -8,7 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @Embeddable
-@NotBlank
 public class Adress {
     private String postalBoxNumber;
     private String street;
