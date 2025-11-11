@@ -1,5 +1,6 @@
 package ovh.bookexchange.api.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -39,13 +40,13 @@ public class AuthenticationController {
     private final PasswordEncoder passwordEncoder;
     @PostMapping("/login")
     @ResponseBody
-    public AuthResponse login(@RequestBody AuthRequest request) {
+    public AuthResponse login(@Valid @RequestBody AuthRequest request) {
         return getAuthResponse(request.getEmail(), request.getPassword());
     }
 
     @PostMapping("/register")
     @ResponseBody
-    public AuthResponse register(@RequestBody RegisterRequest request) {
+    public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
         String password = request.getPassword();
         String hashedPassword = passwordEncoder.encode(password);
         EndUser endUser = new EndUser(request.getFirstName(), request.getLastName(), request.getEmail(), hashedPassword);
