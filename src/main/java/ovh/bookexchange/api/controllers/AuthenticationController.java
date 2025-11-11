@@ -1,6 +1,7 @@
 package ovh.bookexchange.api.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -50,7 +51,11 @@ public class AuthenticationController {
         String password = request.getPassword();
         String hashedPassword = passwordEncoder.encode(password);
         EndUser endUser = new EndUser(request.getFirstName(), request.getLastName(), request.getEmail(), hashedPassword);
-        endUserRepository.save(endUser);
+        try {
+            endUserRepository.save(endUser);
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
+        }
         return getAuthResponse(request.getEmail(), password);
     }
 
