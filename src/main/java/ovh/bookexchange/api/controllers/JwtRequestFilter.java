@@ -37,7 +37,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         final String token = authorizationHeader.substring(7);
         final DecodedJWT decodedJWT = jwtTokenService.validateToken(token);
-        if (decodedJWT == null || decodedJWT.getSubject() == null || decodedJWT.getExpiresAtAsInstant().isAfter(Instant.now())) {
+        if (decodedJWT == null || decodedJWT.getSubject() == null || decodedJWT.getExpiresAtAsInstant().isBefore(Instant.now())) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -55,6 +55,5 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         filterChain.doFilter(request, response);
-
     }
 }
