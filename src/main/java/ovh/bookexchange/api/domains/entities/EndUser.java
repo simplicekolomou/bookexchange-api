@@ -66,4 +66,19 @@ public class EndUser {
     @ManyToMany
     @NotNull
     private List<EndUser> friends;
+
+    public EndUser() {}
+
+    public EndUser(String firstName, String lastName, String email, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.memberships = List.of();
+        this.messages = List.of();
+        this.payements = List.of();
+        this.collection = List.of();
+        this.whisedList = List.of();
+        this.friends = List.of();
+    }
 }
