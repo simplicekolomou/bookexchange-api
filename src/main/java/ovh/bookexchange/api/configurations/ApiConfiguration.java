@@ -1,4 +1,4 @@
-package ovh.bookexchange.api;
+package ovh.bookexchange.api.configurations;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableJpaRepositories
+@EnableJpaRepositories(basePackages = "ovh.bookexchange.api.infrastructures")
 @EnableTransactionManagement
 public class ApiConfiguration {
     @Autowired
