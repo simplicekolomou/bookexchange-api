@@ -12,7 +12,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ovh.bookexchange.api.controllers.JwtRequestFilter;
 import ovh.bookexchange.api.services.EndUserDetailsService;
 import ovh.bookexchange.api.services.JwtTokenService;
 
