@@ -2,6 +2,7 @@ package ovh.bookexchange.api.domains.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,11 +21,6 @@ public class Book {
     @NotBlank
     private String apiId;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
-    @NotNull
-    private List<BookCopy> copies;
-
-    @ManyToMany
-    @NotNull
-    private List<Author> authors;
+    @NotEmpty
+    private List<String> authors;
 }
