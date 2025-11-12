@@ -2,18 +2,15 @@ package ovh.bookexchange.api.controllers.representations;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import ovh.bookexchange.api.domains.entities.*;
 
-import java.util.List;
-
 @Getter
 @Setter
-public class UserRepresentation {
+public class UserRep {
     @Id
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,7 +36,7 @@ public class UserRepresentation {
     @Embedded
     private Adress adress;
 
-    public UserRepresentation(String firstName, String lastName, String email, boolean isAdmin, String profilePicture, String bio, Adress adress) {
+    public UserRep(String firstName, String lastName, String email, boolean isAdmin, String profilePicture, String bio, Adress adress) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

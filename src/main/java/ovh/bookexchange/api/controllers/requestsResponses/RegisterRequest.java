@@ -1,4 +1,4 @@
-package ovh.bookexchange.api.controllers.representations;
+package ovh.bookexchange.api.controllers.requestsResponses;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -1,4 +1,4 @@
-package ovh.bookexchange.api.controllers.representations;
+package ovh.bookexchange.api.controllers.requestsResponses;
 
 import lombok.Getter;
 import lombok.Setter;
