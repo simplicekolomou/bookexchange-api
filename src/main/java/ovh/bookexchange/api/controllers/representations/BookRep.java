@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 public class BookRep {
-    @PositiveOrZero
     private long id;
 
     @NotNull
@@ -43,5 +42,6 @@ public class BookRep {
 
     private String description;
 
+    @PositiveOrZero
     private long ownerId;
 }

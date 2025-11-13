@@ -1,6 +1,7 @@
 package ovh.bookexchange.api.configurations;
 
 import jakarta.persistence.EntityManagerFactory;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -48,5 +49,10 @@ public class ApiConfiguration {
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.setEntityManagerFactory(entityManagerFactory);
         return txManager;
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper(); //add eventual model mapper configuration
     }
 }
