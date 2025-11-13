@@ -41,23 +41,12 @@ public class SecurityConfiguration {
                                          final EndUserDetailsService endUserDetailsService,
                                          final JwtTokenService jwtTokenService,
                                          Environment environment) throws Exception {
-        boolean devSercurityFilters = environment.getProperty("dev.security.filters", Boolean.class, false);
-        if (!devSercurityFilters) {
-            return http.cors(withDefaults())
-                    .csrf(AbstractHttpConfigurer::disable) //TODO: enable CSRF protection (needs frontend and backend implementation)
-                    .authorizeHttpRequests((authorize) -> authorize
-                            .requestMatchers("/", "/login", "/register").permitAll()
-                            .requestMatchers("/error").hasAuthority(EndUserDetailsService.ADMIN)
-                            .anyRequest().hasAuthority(EndUserDetailsService.USER))
-                    .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .addFilterBefore(jwtRequestFilter(endUserDetailsService, jwtTokenService), UsernamePasswordAuthenticationFilter.class)
-                    .build();
-        }
         return http.cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/", "/login", "/register").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().hasAuthority(EndUserDetailsService.USER))
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter(endUserDetailsService, jwtTokenService), UsernamePasswordAuthenticationFilter.class)
