@@ -2,6 +2,7 @@ package ovh.bookexchange.api.controllers;
 
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class BookCopiesController {
         this.mapper = mapper;
     }
     @GetMapping(value = "/user/me")
-    public List<BookRep> getBookCopiesInUserCollection(Principal principal, Pageable pageable) {
+    public List<BookRep> getBookCopiesInUserCollection(Principal principal, @ParameterObject Pageable pageable) {
         if (pageable.getPageSize() > 100) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Page size must be less than or equal to 100");
             //TODO il doit y avoir un meilleur moyen (@PageableDefault existe pourqoi pas @PageableLimits ?)
