@@ -21,12 +21,14 @@ import java.util.List;
 public class BookCopiesController {
     private final BookCopyRepository bookCopyRepository;
     private final EndUserRepository endUserRepository;
-    public BookCopiesController(BookCopyRepository bookCopyRepository, EndUserRepository endUserRepository) {
+    private final ModelMapper mapper;
+    public BookCopiesController(BookCopyRepository bookCopyRepository, EndUserRepository endUserRepository, ModelMapper mapper) {
         this.bookCopyRepository = bookCopyRepository;
         this.endUserRepository = endUserRepository;
+        this.mapper = mapper;
     }
     @GetMapping(value = "/user/me")
-    public List<BookRep> getBookCopiesInUserCollection(Principal principal, Pageable pageable, ModelMapper mapper) {
+    public List<BookRep> getBookCopiesInUserCollection(Principal principal, Pageable pageable) {
         if (pageable.getPageSize() > 100) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Page size must be less than or equal to 100");
             //TODO il doit y avoir un meilleur moyen (@PageableDefault existe pourqoi pas @PageableLimits ?)
@@ -36,7 +38,7 @@ public class BookCopiesController {
     }
 
     @PostMapping(value = "/user/me")
-    public void addBookCopy(@RequestBody @Valid BookRep bookRep, Principal principal, ModelMapper mapper) {
+    public void addBookCopy(@RequestBody @Valid BookRep bookRep, Principal principal) {
         BookCopy bookCopy = mapper.map(bookRep, BookCopy.class);
         EndUser owner = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         bookCopy.setOwner(owner);
