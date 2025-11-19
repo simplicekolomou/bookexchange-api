@@ -9,8 +9,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * HandlerInterceptor chargé de gérer la taille maximale des pages.
- * Si elle dépasse la valeur renseignée dans le constructuer,
+ * Filtre chargé de gérer la taille maximale des pages.
+ * Si elle dépasse la valeur renseignée dans le constructeur,
  * la requête est modifiée pour que la taille demandée soit la taille maximale.
  */
 public class PageSizeFilter extends OncePerRequestFilter {
