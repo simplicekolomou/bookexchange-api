@@ -3,12 +3,12 @@ package ovh.bookexchange.api.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ovh.bookexchange.api.domains.booksearch.BooksSearch;
-import ovh.bookexchange.api.domains.booksearch.dto.VolumesResponse;
+import ovh.bookexchange.api.domains.booksearch.dto.VolumeShort;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/books")
 public class BookController {
 
 
@@ -20,7 +20,7 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public VolumesResponse search(
+    public List<VolumeShort> search(
             @RequestParam(required = false, defaultValue = "") String author,
             @RequestParam(required = false, defaultValue = "") String title
     ) {

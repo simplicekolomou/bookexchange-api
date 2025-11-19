@@ -2,7 +2,12 @@ package ovh.bookexchange.api.domains.booksearch;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ovh.bookexchange.api.domains.booksearch.dto.Volume;
+import ovh.bookexchange.api.domains.booksearch.dto.VolumeShort;
 import ovh.bookexchange.api.domains.booksearch.dto.VolumesResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BooksSearch {
@@ -13,7 +18,20 @@ public class BooksSearch {
         this.bookClientInterface = bookClientInterface;
     }
 
-    public VolumesResponse searchWorks(String title, String author, int startIndex, int maxResults) {
-        return bookClientInterface.searchWorks(title, author, startIndex, maxResults);
+    public List<VolumeShort> searchWorks(String title, String author, int startIndex, int maxResults) {
+        VolumesResponse volumesResponse = bookClientInterface.searchWorks(title, author, startIndex, maxResults);
+        List<VolumeShort> volumes = new ArrayList<>();
+        for (Volume item : volumesResponse.items()) {
+            VolumeShort volumeShort = new VolumeShort(
+                    item.id(),
+                    item.volumeInfo().title(),
+                    "https://play.google.com/books/content/images/frontcover/" + item.id(),
+                    item.volumeInfo().industryIdentifiers(),
+                    item.volumeInfo().authors(),
+                    item.volumeInfo().description()
+            );
+            volumes.add(volumeShort);
+        }
+        return volumes;
     }
 }
