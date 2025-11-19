@@ -55,7 +55,7 @@ public class EndUser {
     @NotNull
     private List<Payement> payements;
 
-    @OneToMany
+    @OneToMany(mappedBy = "owner")
     @NotNull
     private List<BookCopy> collection;
 

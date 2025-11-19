@@ -1,23 +1,18 @@
-package ovh.bookexchange.api.domains.entities;
+package ovh.bookexchange.api.controllers.representations;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-
+import ovh.bookexchange.api.domains.entities.AvailabilityType;
+import ovh.bookexchange.api.domains.entities.PhysicalState;
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
-public class BookCopy {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Setter(AccessLevel.NONE)
+public class BookRep {
     private long id;
 
     @NotNull
@@ -27,7 +22,7 @@ public class BookCopy {
     private AvailabilityType availabilityType;
 
     @PositiveOrZero
-    private long askingPrice; //en cents
+    private long askingPrice;
 
     @NotBlank
     private String title;
@@ -47,11 +42,6 @@ public class BookCopy {
 
     private String description;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private EndUser owner;
-
-    @OneToMany(mappedBy = "bookCopy", cascade = CascadeType.ALL)
-    @NotNull
-    private List<WarehouseItem> warehouseItems;
+    @PositiveOrZero
+    private long ownerId;
 }
