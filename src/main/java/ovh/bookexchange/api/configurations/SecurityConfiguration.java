@@ -12,6 +12,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ovh.bookexchange.api.filters.JwtRequestFilter;
 import ovh.bookexchange.api.services.EndUserDetailsService;
 import ovh.bookexchange.api.services.JwtTokenService;
 
@@ -32,15 +33,14 @@ public class SecurityConfiguration {
     }
 
     private JwtRequestFilter jwtRequestFilter(final EndUserDetailsService endUserDetailsService,
-                                             final JwtTokenService jwtTokenService) {
+                                              final JwtTokenService jwtTokenService) {
         return new JwtRequestFilter(jwtTokenService, endUserDetailsService);
     }
 
     @Bean
     public SecurityFilterChain configure(final HttpSecurity http,
                                          final EndUserDetailsService endUserDetailsService,
-                                         final JwtTokenService jwtTokenService,
-                                         Environment environment) throws Exception {
+                                         final JwtTokenService jwtTokenService) throws Exception {
         return http.cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize

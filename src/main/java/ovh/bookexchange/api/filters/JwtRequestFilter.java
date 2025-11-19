@@ -1,4 +1,4 @@
-package ovh.bookexchange.api.configurations;
+package ovh.bookexchange.api.filters;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;

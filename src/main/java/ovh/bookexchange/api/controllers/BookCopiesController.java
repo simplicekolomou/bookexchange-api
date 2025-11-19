@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,10 +29,6 @@ public class BookCopiesController {
     }
     @GetMapping(value = "/user/me")
     public List<BookRep> getBookCopiesInUserCollection(Principal principal, @ParameterObject Pageable pageable) {
-        if (pageable.getPageSize() > 100) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Page size must be less than or equal to 100");
-            //TODO il doit y avoir un meilleur moyen (@PageableDefault existe pourqoi pas @PageableLimits ?)
-        }
         List<BookCopy> bookCopies = bookCopyRepository.findByOwnerEmail(principal.getName(), pageable);
         return bookCopies.stream().map(bookCopy -> mapper.map(bookCopy, BookRep.class)).toList();
     }
