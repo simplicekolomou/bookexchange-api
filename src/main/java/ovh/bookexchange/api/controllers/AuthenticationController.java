@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import ovh.bookexchange.api.controllers.representations.UserRep;
 import ovh.bookexchange.api.controllers.requestsResponses.AuthRequest;
 import ovh.bookexchange.api.controllers.requestsResponses.AuthResponse;
 import ovh.bookexchange.api.controllers.requestsResponses.RegisterRequest;
@@ -53,10 +54,10 @@ public class AuthenticationController {
         EndUser endUser = new EndUser(request.getFirstName(), request.getLastName(), request.getEmail(), hashedPassword);
         try {
             endUserRepository.save(endUser);
+            return getAuthResponse(request.getEmail(), password);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
         }
-        return getAuthResponse(request.getEmail(), password);
     }
 
     private AuthResponse getAuthResponse(String email, String password) {
@@ -68,6 +69,8 @@ public class AuthenticationController {
         UserDetails userDetails = endUserDetailsService.loadUserByUsername(email);
         AuthResponse response = new AuthResponse();
         response.setAccessToken(jwtTokenService.generateToken(userDetails));
+        EndUser endUser = endUserRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
+        response.setUser(new UserRep(endUser.getId(), endUser.getFirstName(), endUser.getLastName(), endUser.getEmail(), endUser.isAdmin(), endUser.getProfilePicture(), endUser.getBio(), endUser.getAdress()));
         return response;
     }
 }

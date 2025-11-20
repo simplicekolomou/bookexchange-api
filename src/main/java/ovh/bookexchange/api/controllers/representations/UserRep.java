@@ -37,6 +37,11 @@ public class UserRep {
     private Adress adress;
 
     public UserRep(String firstName, String lastName, String email, boolean isAdmin, String profilePicture, String bio, Adress adress) {
+        this(0, firstName, lastName, email, isAdmin, profilePicture, bio, adress);
+    }
+
+    public UserRep(long id, String firstName, String lastName, String email, boolean isAdmin, String profilePicture, String bio, Adress adress) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
