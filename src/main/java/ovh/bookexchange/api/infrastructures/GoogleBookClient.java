@@ -1,18 +1,15 @@
-package ovh.bookexchange.api.domains.booksearch;
+package ovh.bookexchange.api.infrastructures;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import ovh.bookexchange.api.domains.booksearch.BookClientInterface;
 import ovh.bookexchange.api.domains.booksearch.dto.VolumesResponse;
 
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.StringJoiner;
 
 @Slf4j
