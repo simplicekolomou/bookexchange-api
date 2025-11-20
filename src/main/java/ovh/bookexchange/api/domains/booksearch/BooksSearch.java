@@ -21,6 +21,9 @@ public class BooksSearch {
     public List<VolumeShort> searchWorks(String title, String author, int startIndex, int maxResults) {
         VolumesResponse volumesResponse = bookClientInterface.searchWorks(title, author, startIndex, maxResults);
         List<VolumeShort> volumes = new ArrayList<>();
+        if (volumesResponse == null || volumesResponse.items() == null || volumesResponse.items().isEmpty()) {
+            return volumes;
+        }
         for (Volume item : volumesResponse.items()) {
             VolumeShort volumeShort = new VolumeShort(
                     item.id(),
