@@ -47,7 +47,6 @@ public class SecurityConfiguration {
                         .requestMatchers("/", "/login", "/register").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/books/search").permitAll()
                         .anyRequest().hasAuthority(EndUserDetailsService.USER))
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter(endUserDetailsService, jwtTokenService), UsernamePasswordAuthenticationFilter.class)
