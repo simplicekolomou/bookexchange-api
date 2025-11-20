@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ovh.bookexchange.api.domains.booksearch.dto.VolumesResponse;
-import ovh.bookexchange.api.infrastructures.GoogleBookClient;
+import ovh.bookexchange.api.infrastructures.booksearch.GoogleBookClient;
 
 @SpringBootTest
 class GoogleBookClientTest {

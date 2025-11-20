@@ -2,7 +2,7 @@ package ovh.bookexchange.api.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ovh.bookexchange.api.domains.booksearch.BooksSearch;
+import ovh.bookexchange.api.infrastructures.booksearch.BooksSearch;
 import ovh.bookexchange.api.domains.booksearch.dto.VolumeShort;
 
 import java.util.List;

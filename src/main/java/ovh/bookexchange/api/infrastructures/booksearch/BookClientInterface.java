@@ -1,4 +1,4 @@
-package ovh.bookexchange.api.domains.booksearch;
+package ovh.bookexchange.api.infrastructures.booksearch;
 
 import ovh.bookexchange.api.domains.booksearch.dto.VolumesResponse;
 

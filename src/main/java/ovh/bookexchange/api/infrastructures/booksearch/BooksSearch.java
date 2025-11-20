@@ -1,7 +1,8 @@
-package ovh.bookexchange.api.domains.booksearch;
+package ovh.bookexchange.api.infrastructures.booksearch;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ovh.bookexchange.api.domains.booksearch.BookSearchInterface;
 import ovh.bookexchange.api.domains.booksearch.dto.Volume;
 import ovh.bookexchange.api.domains.booksearch.dto.VolumeShort;
 import ovh.bookexchange.api.domains.booksearch.dto.VolumesResponse;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class BooksSearch {
+public class BooksSearch implements BookSearchInterface {
     BookClientInterface bookClientInterface;
 
     @Autowired
