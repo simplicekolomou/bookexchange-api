@@ -29,6 +29,7 @@ public class BooksSearch implements BookSearchInterface {
             VolumeShort volumeShort = new VolumeShort(
                     item.id(),
                     item.volumeInfo().title(),
+                    item.volumeInfo().publishedDate(),
                     "https://play.google.com/books/content/images/frontcover/" + item.id(),
                     item.volumeInfo().industryIdentifiers(),
                     item.volumeInfo().authors(),
