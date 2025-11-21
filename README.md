@@ -18,3 +18,13 @@ vous pouvez modifier les variables d'environement dans la configuration de lance
 ou (sur windows)
 .\gradlew.bat bootRun
 ```
+## Build d'une image docker
+### 1. Créer le fichier .jar
+```bash
+gradle bootJar
+```
+### 2. Créer l'image
+Modifiez le tag si nécessaire.
+```aiignore
+build -t be-api:0.0.1 --build-arg JAR_FILE=build/libs/api-0.0.1-SNAPSHOT.jar .
+```
