@@ -11,9 +11,7 @@ import ovh.bookexchange.api.domains.entities.*;
 @Getter
 @Setter
 public class UserRep {
-    @Id
     @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @NotBlank
@@ -29,6 +27,8 @@ public class UserRep {
 
     private boolean isAdmin;
 
+    private boolean isVisible;
+
     private String profilePicture;
 
     private String bio;
@@ -36,18 +36,6 @@ public class UserRep {
     @Embedded
     private Adress adress;
 
-    public UserRep(String firstName, String lastName, String email, boolean isAdmin, String profilePicture, String bio, Adress adress) {
-        this(0, firstName, lastName, email, isAdmin, profilePicture, bio, adress);
-    }
-
-    public UserRep(long id, String firstName, String lastName, String email, boolean isAdmin, String profilePicture, String bio, Adress adress) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.isAdmin = isAdmin;
-        this.profilePicture = profilePicture;
-        this.bio = bio;
-        this.adress = adress;
+    public UserRep() {
     }
 }

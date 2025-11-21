@@ -36,8 +36,11 @@ public class EndUser {
 
     private boolean isAdmin;
 
+    private boolean isVisible;
+
     private String profilePicture;
 
+    @Size(max=100)
     private String bio;
 
     @Embedded

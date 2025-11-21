@@ -1,6 +1,7 @@
 package ovh.bookexchange.api.controllers;
 
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,12 +26,13 @@ import ovh.bookexchange.api.services.JwtTokenService;
 @RestController
 public class AuthenticationController {
 
-    public AuthenticationController(AuthenticationManager authenticationManager, EndUserDetailsService endUserDetailsService, JwtTokenService jwtTokenService, EndUserRepository endUserRepository, PasswordEncoder passwordEncoder) {
+    public AuthenticationController(AuthenticationManager authenticationManager, EndUserDetailsService endUserDetailsService, JwtTokenService jwtTokenService, EndUserRepository endUserRepository, PasswordEncoder passwordEncoder, ModelMapper mapper) {
         this.authenticationManager = authenticationManager;
         this.endUserDetailsService = endUserDetailsService;
         this.jwtTokenService = jwtTokenService;
         this.endUserRepository = endUserRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mapper = mapper;
     }
 
     private final AuthenticationManager authenticationManager;
@@ -40,6 +42,9 @@ public class AuthenticationController {
     private final EndUserRepository endUserRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final ModelMapper mapper;
+
     @PostMapping("/login")
     @ResponseBody
     public AuthResponse login(@Valid @RequestBody AuthRequest request) {
@@ -70,7 +75,7 @@ public class AuthenticationController {
         AuthResponse response = new AuthResponse();
         response.setAccessToken(jwtTokenService.generateToken(userDetails));
         EndUser endUser = endUserRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
-        response.setUser(new UserRep(endUser.getId(), endUser.getFirstName(), endUser.getLastName(), endUser.getEmail(), endUser.isAdmin(), endUser.getProfilePicture(), endUser.getBio(), endUser.getAdress()));
+        response.setUser(mapper.map(endUser, UserRep.class));
         return response;
     }
 }
