@@ -13,7 +13,7 @@ public class UserUpdateRep {
     private String firstName;
 
     @NotBlank(message = "Last name is required")
-    @Size(min=1, max=255, message = "Last name must be less than 256 characters")
+    @Size(max=255, message = "Last name must be less than 256 characters")
     private String lastName;
 
     @Size(max=100, message = "Localite must be less than 256 characters")
