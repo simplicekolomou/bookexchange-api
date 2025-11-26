@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ovh.bookexchange.api.controllers.representations.UserRep;
-import ovh.bookexchange.api.controllers.representations.UserUpdateRep;
 import ovh.bookexchange.api.domains.entities.Adress;
 import ovh.bookexchange.api.domains.entities.EndUser;
 import ovh.bookexchange.api.infrastructures.EndUserRepository;
@@ -32,18 +31,14 @@ public class EndUserController {
     }
 
     @PutMapping("/me")
-    public void updateUser(@Valid @RequestBody UserUpdateRep userRep, Principal principal) {
+    public void updateUser(@Valid @RequestBody UserRep userRep, Principal principal) {
         String email = principal.getName();
         EndUser endUser = endUserRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         endUser.setFirstName(userRep.getFirstName());
         endUser.setLastName(userRep.getLastName());
-        endUser.setBio(userRep.getBio());
-        if (!userRep.getLocalite().isBlank()) {
-            Adress adress = new Adress();
-            adress.setLocality(userRep.getLocalite());
-            endUser.setAdress(adress);
-        }
+        endUser.setAdress(userRep.getAdress());
         endUser.setVisible(userRep.isVisible());
+        endUser.setBio(userRep.getBio());
         endUserRepository.save(endUser);
     }
 }

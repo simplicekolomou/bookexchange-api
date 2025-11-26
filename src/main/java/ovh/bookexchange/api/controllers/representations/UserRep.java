@@ -15,14 +15,14 @@ public class UserRep {
     private long id;
 
     @NotBlank
+    @Size(max = 100)
     private String firstName;
 
     @NotBlank
+    @Size(max = 100)
     private String lastName;
 
-    @NotBlank
-    @Size(max = 255)
-    @Column(unique = true)
+    @Size(max = 100)
     private String email;
 
     private boolean isAdmin;
@@ -31,11 +31,9 @@ public class UserRep {
 
     private String profilePicture;
 
+    @Size(max=100)
     private String bio;
 
     @Embedded
     private Adress adress;
-
-    public UserRep() {
-    }
 }

@@ -10,10 +10,14 @@ import lombok.Setter;
 @Setter
 @Embeddable
 public class Adress {
+    @Size(max = 10)
     private String postalBoxNumber;
+    @Size(max = 100)
     private String street;
     @Size(max = 100)
     private String locality;
+    @Size(max = 100)
     private String country;
+    @Size(max = 10)
     private String zipCode;
 }
