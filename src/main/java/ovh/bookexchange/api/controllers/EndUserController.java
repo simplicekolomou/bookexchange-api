@@ -30,7 +30,14 @@ public class EndUserController {
         return mapper.map(endUser, UserRep.class);
     }
 
-    @PutMapping("/me")
+
+    /**
+     * Update user information
+     * @param userRep Une representation de l'utilisateur modififé.
+     * !!! seul : firstName, lastName, adress, bio et visible sont modifiables
+     * pas besoin d'inclure le reste des champs de UserRep.
+     */
+    @PutMapping("/me") //Note à moi-même : Ne plus faire des puts à la place de patch (mauvaise autodoc, implémentation bof).
     public void updateUser(@Valid @RequestBody UserRep userRep, Principal principal) {
         String email = principal.getName();
         EndUser endUser = endUserRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
