@@ -19,7 +19,7 @@ import ovh.bookexchange.api.controllers.requestsResponses.AuthRequest;
 import ovh.bookexchange.api.controllers.requestsResponses.AuthResponse;
 import ovh.bookexchange.api.controllers.requestsResponses.RegisterRequest;
 import ovh.bookexchange.api.domains.entities.EndUser;
-import ovh.bookexchange.api.infrastructures.EndUserRepository;
+import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
 import ovh.bookexchange.api.services.EndUserDetailsService;
 import ovh.bookexchange.api.services.JwtTokenService;
 

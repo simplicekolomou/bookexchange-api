@@ -1,4 +1,4 @@
-package ovh.bookexchange.api.infrastructures;
+package ovh.bookexchange.api.infrastructures.repos;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;

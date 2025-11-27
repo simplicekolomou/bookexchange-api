@@ -13,7 +13,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import ovh.bookexchange.api.domains.images.ImageStorable;
 import ovh.bookexchange.api.infrastructures.images.ImageStore;
 
 import javax.sql.DataSource;
@@ -21,7 +20,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "ovh.bookexchange.api.infrastructures")
+@EnableJpaRepositories(basePackages = "ovh.bookexchange.api.infrastructures.repos")
 @EnableTransactionManagement
 public class ApiConfiguration {
     @Autowired
@@ -61,9 +60,9 @@ public class ApiConfiguration {
     }
 
     @Bean
-    public ImageStorable imageStore() {
+    public ImageStore imageStore() {
         return new ImageStore(
-                Paths.get(environment.getProperty("profile.picture.folder.path", String.class, "profile_pictures")),
+                Paths.get(environment.getProperty("profile.picture.folder.path", String.class, "uploads/profile_pictures")),
                 Arrays.stream(environment.getProperty("profile.picture.image.formats", String.class, "jpeg;png").split(";")).toList()
         );
     }

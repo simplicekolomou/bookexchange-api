@@ -14,7 +14,7 @@ import ovh.bookexchange.api.domains.images.BadImageTypeException;
 import ovh.bookexchange.api.domains.images.ImageStorable;
 import ovh.bookexchange.api.domains.entities.EndUser;
 import ovh.bookexchange.api.domains.images.NotAnImageException;
-import ovh.bookexchange.api.infrastructures.EndUserRepository;
+import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -26,9 +26,12 @@ public class EndUserController {
     private final EndUserRepository endUserRepository;
     private final ModelMapper mapper;
 
-    public EndUserController(EndUserRepository endUserRepository, ModelMapper mapper) {
+    private final ImageStorable imgStore;
+
+    public EndUserController(EndUserRepository endUserRepository, ModelMapper mapper, ImageStorable imgStore) {
         this.endUserRepository = endUserRepository;
         this.mapper = mapper;
+        this.imgStore = imgStore;
     }
     @GetMapping("/me")
     @ResponseBody
@@ -58,10 +61,10 @@ public class EndUserController {
     }
 
     @PutMapping(value = "/me/profile-picture", consumes = {"image/jpeg", "image/png"})
-    public void uploadProfileImage(@RequestBody @Size(max=4194304) byte[] imageBytes, Principal principal, ImageStorable imgStore) {
+    public void uploadProfileImage(@RequestBody @Size(max=4194304) byte[] imageBytes, Principal principal) {
         EndUser endUser = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         try {
-            String format = imgStore.save(imageBytes, endUser.getId());
+            String format = imgStore.storeImage(imageBytes, endUser.getId());
             endUser.setProfilePicture(format);
             endUserRepository.save(endUser);
         } catch (BadImageTypeException | NotAnImageException e) {
@@ -72,7 +75,7 @@ public class EndUserController {
     }
 
     @DeleteMapping("/me/profile-picture")
-    public void deleteProfileImage(Principal principal, ImageStorable imgStore) {
+    public void deleteProfileImage(Principal principal) {
         EndUser endUser = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         try {
             imgStore.delete(endUser.getId(), endUser.getProfilePicture());
@@ -87,7 +90,7 @@ public class EndUserController {
     }
 
     @GetMapping(value="/me/profile-picture", produces = "image/*")
-    public ResponseEntity<byte[]> getProfileImage(Principal principal, ImageStorable imgStore) {
+    public ResponseEntity<byte[]> getProfileImage(Principal principal) {
         EndUser endUser = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         if (endUser.getProfilePicture() == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No profile picture found");

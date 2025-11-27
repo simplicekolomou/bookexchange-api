@@ -10,8 +10,8 @@ import org.springframework.web.server.ResponseStatusException;
 import ovh.bookexchange.api.controllers.representations.BookRep;
 import ovh.bookexchange.api.domains.entities.BookCopy;
 import ovh.bookexchange.api.domains.entities.EndUser;
-import ovh.bookexchange.api.infrastructures.BookCopyRepository;
-import ovh.bookexchange.api.infrastructures.EndUserRepository;
+import ovh.bookexchange.api.infrastructures.repos.BookCopyRepository;
+import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
 
 import java.security.Principal;
 import java.util.List;

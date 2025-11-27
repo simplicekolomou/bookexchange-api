@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ovh.bookexchange.api.domains.entities.EndUser;
-import ovh.bookexchange.api.infrastructures.EndUserRepository;
+import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
