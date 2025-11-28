@@ -5,7 +5,7 @@ WORKDIR /builder
 # This points to the built jar file in the target folder
 COPY . .
 RUN ./gradlew bootJar --info
-COPY build/libs/api-0.0.1-SNAPSHOT.jar application.jar
+RUN mv build/libs/api-0.0.1-SNAPSHOT.jar application.jar
 # Extract the jar file using an efficient layout
 RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted
 
