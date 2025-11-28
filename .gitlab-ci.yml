@@ -1,6 +1,7 @@
 #Job de construction de l'image
 build-images:
   stage: build
+  image: docker:dind
   only:
     - master
     - tags
