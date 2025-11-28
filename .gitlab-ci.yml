@@ -3,7 +3,8 @@ build-images:
   stage: build
   image: docker:dind
   rules:
-    if $CI_COMMIT_TAG
+    - if:
+        $CI_COMMIT_TAG
   tags:
     - ue25 # Tag obligatoire pour le runner
   script:
