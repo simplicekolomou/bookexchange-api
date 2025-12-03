@@ -8,5 +8,6 @@ build-images:
     - ue25 # Tag obligatoire pour le runner
   script:
     - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} .
+    - docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} ${CI_REGISTRY_IMAGE}:"$(echo $CI_COMMIT_TAG | cut -d . -f 1)"
     - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
-    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} ${CI_REGISTRY_IMAGE}:"$(echo $CI_COMMIT_TAG | cut -d . -f 1)"
+    - docker push --all-tags ${CI_REGISTRY_IMAGE}
