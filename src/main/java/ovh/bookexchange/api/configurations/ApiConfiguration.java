@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import ovh.bookexchange.api.infrastructures.images.ImageStore;
 
 import javax.sql.DataSource;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
@@ -61,8 +62,12 @@ public class ApiConfiguration {
 
     @Bean
     public ImageStore imageStore() {
+        Path imagePath = Paths.get(environment.getProperty("profile.picture.folder.path", String.class, "uploads/profile_pictures"));
+        if (!imagePath.toFile().exists()) {
+            imagePath.toFile().mkdirs();
+        }
         return new ImageStore(
-                Paths.get(environment.getProperty("profile.picture.folder.path", String.class, "uploads/profile_pictures")),
+                imagePath,
                 Arrays.stream(environment.getProperty("profile.picture.image.formats", String.class, "jpeg;png").split(";")).toList()
         );
     }

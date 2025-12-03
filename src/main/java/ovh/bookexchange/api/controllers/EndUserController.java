@@ -61,7 +61,7 @@ public class EndUserController {
     }
 
     @PutMapping(value = "/me/profile-picture", consumes = {"image/jpeg", "image/png"})
-    public void uploadProfileImage(@RequestBody @Size(max=4194304) byte[] imageBytes, Principal principal) {
+    public void uploadProfileImage(@RequestBody byte[] imageBytes, Principal principal) {
         EndUser endUser = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         try {
             String format = imgStore.storeImage(imageBytes, endUser.getId());
