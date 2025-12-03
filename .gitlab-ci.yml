@@ -9,4 +9,4 @@ build-images:
   script:
     - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} .
     - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
-    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
+    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} ${CI_REGISTRY_IMAGE}:"$(cut -d . -f 1 <<< $CI_COMMIT_TAG)"
