@@ -11,7 +11,6 @@ import ovh.bookexchange.api.domains.entities.*;
 @Getter
 @Setter
 public class UserRep {
-    @Setter(AccessLevel.NONE)
     private long id;
 
     @NotBlank
