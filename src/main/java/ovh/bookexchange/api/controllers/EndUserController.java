@@ -1,7 +1,6 @@
 package ovh.bookexchange.api.controllers;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Size;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,12 +34,11 @@ public class EndUserController {
     }
     @GetMapping("/me")
     @ResponseBody
-    public UserRep getUserById(Principal principal) {
+    public UserRep getCurrentUser(Principal principal) {
         String email = principal.getName();
         EndUser endUser = endUserRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         return mapper.map(endUser, UserRep.class);
     }
-
 
     /**
      * Update user information
