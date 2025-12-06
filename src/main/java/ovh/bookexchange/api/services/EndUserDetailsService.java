@@ -34,10 +34,14 @@ public class EndUserDetailsService implements UserDetailsService, JwtPasswordRes
         return new User(endUser.getEmail(), endUser.getPassword(), authorities);
     }
 
+    /**
+     * @param tokenSubject le sujet du token JWT (l'email de l'utilisateur),
+     *                     s'il s'agit d'un toke généré pour un reset de mdp, @reset être en début de chaîne.
+     */
     @Override
-    public UserDetails loadUserByUsernameAndToken(String token, boolean isResetPassword) {
+    public UserDetails loadUserByUsernameAndToken(String tokenSubject, boolean isResetPassword) {
         if(isResetPassword){
-            String username = token.split("@reset")[0];
+            String username = tokenSubject.split("@reset")[0];
             return loadUserByUsername(username);
         }
         return null;

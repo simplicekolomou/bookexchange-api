@@ -80,12 +80,19 @@ public class AuthenticationController {
         return response;
     }
 
+    /**
+     * Envoi un email de réinitialisation de mdp.
+     */
     @PutMapping("/forgot-password")
     @ResponseBody
     public void forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         createPasswordResetToken(request.getEmail());
     }
 
+    /**
+     * Réinitialise le mdp, authentifie l'utilisateur grâce au token contenu dans l'email.
+     * Retourne une réponse connectant l'utilisateur.
+     */
     @PostMapping("/reset-password")
     public AuthResponse resetPassword(@RequestBody ResetPasswordRequest request) {
         return resetPassword(request.getToken(), request.getPassword());
@@ -117,6 +124,11 @@ public class AuthenticationController {
         return getAuthResponse(email, newPassword);
     }
 
+    /**
+     * Crée un token de reset de mdp, et l'envoi par mail..
+     * @param email l'email de l'utilisateur dont le mdp doit être réinitialiser.
+     * @throws ResponseStatusException si l'utilisateur n'existe pas (NOT_FOUND, soit une 404).
+     */
     private void createPasswordResetToken(String email) {
         EndUser endUser = endUserRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not found"));
