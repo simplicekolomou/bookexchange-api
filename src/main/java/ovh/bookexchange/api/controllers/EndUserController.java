@@ -1,7 +1,6 @@
 package ovh.bookexchange.api.controllers;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Size;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,14 +32,14 @@ public class EndUserController {
         this.mapper = mapper;
         this.imgStore = imgStore;
     }
+
     @GetMapping("/me")
     @ResponseBody
-    public UserRep getUserById(Principal principal) {
+    public UserRep getCurrentUser(Principal principal) {
         String email = principal.getName();
         EndUser endUser = endUserRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         return mapper.map(endUser, UserRep.class);
     }
-
 
     /**
      * Update user information
@@ -61,7 +60,7 @@ public class EndUserController {
     }
 
     @PutMapping(value = "/me/profile-picture", consumes = {"image/jpeg", "image/png"})
-    public void uploadProfileImage(@RequestBody @Size(max=4194304) byte[] imageBytes, Principal principal) {
+    public void uploadProfileImage(@RequestBody byte[] imageBytes, Principal principal) {
         EndUser endUser = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         try {
             String format = imgStore.storeImage(imageBytes, endUser.getId());
@@ -91,7 +90,7 @@ public class EndUserController {
 
     @GetMapping(value="/me/profile-picture", produces = "image/*")
     public ResponseEntity<byte[]> getProfileImage(Principal principal) {
-        EndUser endUser = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        EndUser endUser = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         if (endUser.getProfilePicture() == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No profile picture found");
         }
