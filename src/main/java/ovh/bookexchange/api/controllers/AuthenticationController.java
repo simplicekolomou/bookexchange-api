@@ -1,5 +1,6 @@
 package ovh.bookexchange.api.controllers;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -9,30 +10,27 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ovh.bookexchange.api.controllers.representations.UserRep;
-import ovh.bookexchange.api.controllers.requestsResponses.AuthRequest;
-import ovh.bookexchange.api.controllers.requestsResponses.AuthResponse;
-import ovh.bookexchange.api.controllers.requestsResponses.RegisterRequest;
+import ovh.bookexchange.api.controllers.requestsResponses.*;
 import ovh.bookexchange.api.domains.entities.EndUser;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
+import ovh.bookexchange.api.services.EmailService;
 import ovh.bookexchange.api.services.EndUserDetailsService;
 import ovh.bookexchange.api.services.JwtTokenService;
 
 @RestController
 public class AuthenticationController {
 
-    public AuthenticationController(AuthenticationManager authenticationManager, EndUserDetailsService endUserDetailsService, JwtTokenService jwtTokenService, EndUserRepository endUserRepository, PasswordEncoder passwordEncoder, ModelMapper mapper) {
+    public AuthenticationController(AuthenticationManager authenticationManager, EndUserDetailsService endUserDetailsService, JwtTokenService jwtTokenService, EndUserRepository endUserRepository, PasswordEncoder passwordEncoder, ModelMapper mapper, EmailService emailService) {
         this.authenticationManager = authenticationManager;
         this.endUserDetailsService = endUserDetailsService;
         this.jwtTokenService = jwtTokenService;
         this.endUserRepository = endUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.mapper = mapper;
+        this.emailService = emailService;
     }
 
     private final AuthenticationManager authenticationManager;
@@ -42,8 +40,10 @@ public class AuthenticationController {
     private final EndUserRepository endUserRepository;
 
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     private final ModelMapper mapper;
+
 
     @PostMapping("/login")
     @ResponseBody
@@ -76,6 +76,57 @@ public class AuthenticationController {
         response.setAccessToken(jwtTokenService.generateToken(userDetails));
         EndUser endUser = endUserRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         response.setUser(mapper.map(endUser, UserRep.class));
+        System.out.println("La réponse du backend est : " + response.getUser().getId());
         return response;
     }
+
+    @PutMapping("/forgot-password")
+    @ResponseBody
+    public void forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        createPasswordResetToken(request.getEmail());
+    }
+
+    @PostMapping("/reset-password")
+    public AuthResponse resetPassword(@RequestBody ResetPasswordRequest request) {
+        return resetPassword(request.getToken(), request.getPassword());
+    }
+
+    private AuthResponse resetPassword(String token, String newPassword) {
+        // Valider le token JWT
+        DecodedJWT decodedJWT = jwtTokenService.validateToken(token);
+        String subject = decodedJWT.getSubject();
+        if (decodedJWT == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid or expired token");
+        }
+
+        String email = endUserDetailsService.loadUserByUsernameAndToken(subject, true).getUsername();
+
+        // Récupérer l'utilisateur à partir de l'email dans le token
+        //String email = decodedJWT.getSubject();
+        if(email == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid token subject");
+        }
+        EndUser endUser = endUserRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
+
+        // Mettre à jour le mot de passe
+        endUser.setPassword(passwordEncoder.encode(newPassword));
+        endUserRepository.save(endUser);
+
+        // Connecter l'utilisateur en générant un nouveau token JWT
+        return getAuthResponse(email, newPassword);
+    }
+
+    private void createPasswordResetToken(String email) {
+        EndUser endUser = endUserRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not found"));
+        try{
+            UserDetails userDetails = endUserDetailsService.loadUserByUsername(endUser.getEmail());
+            String token = jwtTokenService.generateToken(userDetails, true);
+            emailService.sendResetPasswordMail(email, token);
+        }catch (ResponseStatusException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error generating reset token");
+        }
+    }
+
 }
