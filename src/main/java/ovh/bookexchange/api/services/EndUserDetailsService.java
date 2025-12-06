@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class EndUserDetailsService implements UserDetailsService {
+public class EndUserDetailsService implements UserDetailsService, JwtPasswordResetToken {
     public final static String USER = "USER";
     public final static String ADMIN = "ADMIN";
 
@@ -32,5 +32,14 @@ public class EndUserDetailsService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(ADMIN));
         }
         return new User(endUser.getEmail(), endUser.getPassword(), authorities);
+    }
+
+    @Override
+    public UserDetails loadUserByUsernameAndToken(String token, boolean isResetPassword) {
+        if(isResetPassword){
+            String username = token.split("@reset")[0];
+            return loadUserByUsername(username);
+        }
+        return null;
     }
 }
