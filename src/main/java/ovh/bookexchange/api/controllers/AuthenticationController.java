@@ -20,6 +20,8 @@ import ovh.bookexchange.api.services.EmailService;
 import ovh.bookexchange.api.services.EndUserDetailsService;
 import ovh.bookexchange.api.services.JwtTokenService;
 
+import java.security.Principal;
+
 @RestController
 public class AuthenticationController {
 
@@ -76,7 +78,6 @@ public class AuthenticationController {
         response.setAccessToken(jwtTokenService.generateToken(userDetails));
         EndUser endUser = endUserRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         response.setUser(mapper.map(endUser, UserRep.class));
-        System.out.println("La réponse du backend est : " + response.getUser().getId());
         return response;
     }
 
@@ -96,6 +97,22 @@ public class AuthenticationController {
     @PostMapping("/reset-password")
     public AuthResponse resetPassword(@RequestBody ResetPasswordRequest request) {
         return resetPassword(request.getToken(), request.getPassword());
+    }
+
+    @PutMapping("/update-password")
+    public void updatePassword(@RequestBody UpdatePasswordRequest request, Principal principal) {
+        EndUser endUser = endUserRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        // Vérifier l'ancien mot de passe
+        if (!passwordEncoder.matches(request.getCurrentPassword(), endUser.getPassword())) {
+            System.out.println("Les mots de passe ne correspondent pas : " + request.getCurrentPassword() + " / " + endUser.getPassword());
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Old password is incorrect");
+        }
+
+        // Mettre à jour avec le nouveau mot de passe
+        endUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        endUserRepository.save(endUser);
     }
 
     private AuthResponse resetPassword(String token, String newPassword) {
@@ -140,5 +157,4 @@ public class AuthenticationController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error generating reset token");
         }
     }
-
 }
