@@ -20,6 +20,7 @@ public class JwtTokenService {
     private static final Logger log = LoggerFactory.getLogger(JwtTokenService.class);
 
     private final Duration duration;
+    private final Duration resetDuration;
 
     private final Algorithm algorithm;
     private final JWTVerifier verifier;
@@ -28,14 +29,19 @@ public class JwtTokenService {
         this.algorithm = Algorithm.HMAC512(Objects.requireNonNull(environment.getProperty("jwt.secret"), "JWT_SECRET must not be null"));
         this.verifier = JWT.require(this.algorithm).build();
         this.duration = Duration.ofMinutes(Long.parseLong(Objects.requireNonNull(environment.getProperty("jwt.duration"), "JWT_DURATION must not be null")));
+        this.resetDuration = Duration.ofMinutes(environment.getProperty("jwt.reset.duration", Long.class, 15L));
     }
 
     public String generateToken(UserDetails userDetails) {
+        return generateToken(userDetails, false);
+    }
+
+    public String generateToken(UserDetails userDetails, boolean isPaswordReset) {
         final Instant now = Instant.now();
         return JWT.create()
-                .withSubject(userDetails.getUsername())
+                .withSubject(userDetails.getUsername() + (isPaswordReset ? "@reset" : ""))
                 .withIssuedAt(now)
-                .withExpiresAt(now.plus(duration))
+                .withExpiresAt(now.plus(isPaswordReset ? resetDuration : duration))
                 .sign(algorithm);
     }
 

@@ -3,7 +3,6 @@ package ovh.bookexchange.api.services;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ovh.bookexchange.api.domains.entities.EndUser;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class EndUserDetailsService implements UserDetailsService {
+public class EndUserDetailsService implements JwtPasswordResetToken {
     public final static String USER = "USER";
     public final static String ADMIN = "ADMIN";
 
@@ -32,5 +31,18 @@ public class EndUserDetailsService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(ADMIN));
         }
         return new User(endUser.getEmail(), endUser.getPassword(), authorities);
+    }
+
+    /**
+     * @param tokenSubject le sujet du token JWT (l'email de l'utilisateur),
+     *                     s'il s'agit d'un toke généré pour un reset de mdp, @reset être en début de chaîne.
+     */
+    @Override
+    public UserDetails loadUserByUsernameAndToken(String tokenSubject, boolean isResetPassword) {
+        if(isResetPassword){
+            String username = tokenSubject.split("@reset")[0];
+            return loadUserByUsername(username);
+        }
+        return null;
     }
 }

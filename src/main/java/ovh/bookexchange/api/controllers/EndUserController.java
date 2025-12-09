@@ -32,6 +32,7 @@ public class EndUserController {
         this.mapper = mapper;
         this.imgStore = imgStore;
     }
+
     @GetMapping("/me")
     @ResponseBody
     public UserRep getCurrentUser(Principal principal) {
