@@ -30,6 +30,7 @@ public class BookCopiesController {
         this.endUserRepository = endUserRepository;
         this.mapper = mapper;
     }
+
     @GetMapping(value = "/user/me")
     public List<BookRep> getBookCopiesInUserCollection(Principal principal, @ParameterObject Pageable pageable) {
         List<BookCopy> bookCopies = bookCopyRepository.findByOwnerEmail(principal.getName(), pageable);
@@ -43,7 +44,7 @@ public class BookCopiesController {
             @ParameterObject Pageable pageable
     ) {
         List<BookCopy> bookCopies =
-                bookCopyRepository.findByOwnerIdAndAvailabilityTypeNot(
+                bookCopyRepository.findByOwnerId(
                         userId, AvailabilityType.NONE, pageable
                 );
 
