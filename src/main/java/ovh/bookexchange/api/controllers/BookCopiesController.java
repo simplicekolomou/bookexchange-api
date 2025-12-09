@@ -72,4 +72,39 @@ public class BookCopiesController {
         bookCopy.setWarehouseItems(List.of());
         bookCopyRepository.save(bookCopy);
     }
+
+    @PutMapping("/user/me")
+    public void updateBookCopy(@RequestBody @Valid BookRep bookRep, Principal principal) {
+//        System.out.println("Incoming request: " + bookRep);
+
+        EndUser owner = endUserRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> {
+//                    System.out.println("User not found for principal: " + principal.getName());
+                    return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found");
+                });
+
+        BookCopy copyFromDb = bookCopyRepository.findByIdAndOwnerId(bookRep.getId(), owner.getId())
+                .orElseThrow(() -> {
+//                    System.out.println("Book copy not found: id=" + bookRep.getId() + ", owner=" + owner.getId());
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Pre-existing book copy not found");
+                });
+
+//        System.out.println("Before mapping: " + copyFromDb);
+        mapper.map(bookRep, copyFromDb);     // update the managed entity
+//        System.out.println("After mapping:  " + copyFromDb);
+
+        // Force-update the authors collection because it's a list and the changement tracking is weird.
+        copyFromDb.getAuthors().clear();
+        copyFromDb.getAuthors().addAll(bookRep.getAuthors());
+//        System.out.println("After authors fix: " + copyFromDb);
+
+        // make sure owner is not overridden by DTO
+        copyFromDb.setOwner(owner);
+
+        bookCopyRepository.save(copyFromDb);
+
+//        System.out.println("Book copy updated successfully");
+    }
+
+
 }

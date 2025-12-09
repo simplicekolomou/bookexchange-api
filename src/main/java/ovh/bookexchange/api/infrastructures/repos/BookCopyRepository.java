@@ -7,6 +7,7 @@ import ovh.bookexchange.api.domains.entities.AvailabilityType;
 import ovh.bookexchange.api.domains.entities.BookCopy;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookCopyRepository  extends ListPagingAndSortingRepository<BookCopy, Long>, CrudRepository<BookCopy, Long> {
     List<BookCopy> findByOwnerEmail(String email, Pageable pageable);
@@ -16,4 +17,6 @@ public interface BookCopyRepository  extends ListPagingAndSortingRepository<Book
     List<BookCopy> findByOwnerIdAndIdAndAvailabilityTypeNot(long ownerId, long id, AvailabilityType availabilityType, Pageable pageable);
 
     List<BookCopy> findByOwnerIdAndAvailabilityTypeNot(long ownerId, AvailabilityType availabilityType, Pageable pageable);
+
+    Optional<BookCopy> findByIdAndOwnerId(long id, long ownerId);
 }
