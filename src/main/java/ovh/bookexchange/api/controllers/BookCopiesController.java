@@ -61,50 +61,51 @@ public class BookCopiesController {
     ) {
         log.info("Getting copy {}", copyId);
         BookCopy copy =
-                bookCopyRepository.findById(copyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                bookCopyRepository.findById(copyId).orElseThrow(() -> {
+                    log.error("Copy not found {}", copyId);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND);
+                });
         return mapper.map(copy, BookRep.class);
     }
 
     @PostMapping(value = "/user/me")
     public void addBookCopy(@RequestBody @Valid BookRep bookRep, Principal principal) {
         BookCopy bookCopy = mapper.map(bookRep, BookCopy.class);
-        EndUser owner = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
+        EndUser owner = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> {
+            log.error("User {} has no owner with email {}", principal.getName(), principal.getName());
+            return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found");
+        });
         bookCopy.setOwner(owner);
         bookCopy.setWarehouseItems(List.of());
         bookCopyRepository.save(bookCopy);
+        log.info("Added copy {} to user {}", bookCopy, owner);
     }
 
     @PutMapping("/user/me")
     public void updateBookCopy(@RequestBody @Valid BookRep bookRep, Principal principal) {
-//        System.out.println("Incoming request: " + bookRep);
-
         EndUser owner = endUserRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> {
-//                    System.out.println("User not found for principal: " + principal.getName());
+                    log.error("User not found for principal: {}", principal.getName());
                     return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found");
                 });
 
         BookCopy copyFromDb = bookCopyRepository.findByIdAndOwnerId(bookRep.getId(), owner.getId())
                 .orElseThrow(() -> {
-//                    System.out.println("Book copy not found: id=" + bookRep.getId() + ", owner=" + owner.getId());
+                    log.error("Book copy not found: id={}, owner={}", bookRep.getId(), owner.getId());
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Pre-existing book copy not found");
                 });
 
-//        System.out.println("Before mapping: " + copyFromDb);
         mapper.map(bookRep, copyFromDb);     // update the managed entity
-//        System.out.println("After mapping:  " + copyFromDb);
 
         // Force-update the authors collection because it's a list and the changement tracking is weird.
         copyFromDb.getAuthors().clear();
         copyFromDb.getAuthors().addAll(bookRep.getAuthors());
-//        System.out.println("After authors fix: " + copyFromDb);
 
         // make sure owner is not overridden by DTO
         copyFromDb.setOwner(owner);
 
         bookCopyRepository.save(copyFromDb);
-
-//        System.out.println("Book copy updated successfully");
+        log.info("Updated book copy {}", copyFromDb);
     }
 
 
