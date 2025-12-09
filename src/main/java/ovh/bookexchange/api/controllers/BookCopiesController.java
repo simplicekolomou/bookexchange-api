@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ovh.bookexchange.api.controllers.representations.BookRep;
-import ovh.bookexchange.api.domains.entities.AvailabilityType;
 import ovh.bookexchange.api.domains.entities.BookCopy;
 import ovh.bookexchange.api.domains.entities.EndUser;
 import ovh.bookexchange.api.infrastructures.repos.BookCopyRepository;
