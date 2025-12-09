@@ -16,5 +16,5 @@ public interface BookCopyRepository  extends ListPagingAndSortingRepository<Book
 
     Optional<BookCopy> findByIdAndOwnerId(long id, long ownerId);
 
-    List<BookCopy> findByOwnerId(Long userId, AvailabilityType availabilityType, Pageable pageable);
+    List<BookCopy> findByOwnerId(Long userId, Pageable pageable);
 }

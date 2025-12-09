@@ -45,7 +45,7 @@ public class BookCopiesController {
     ) {
         List<BookCopy> bookCopies =
                 bookCopyRepository.findByOwnerId(
-                        userId, AvailabilityType.NONE, pageable
+                        userId, pageable
                 );
 
         log.info("Getting available copies of userId {}", userId);
