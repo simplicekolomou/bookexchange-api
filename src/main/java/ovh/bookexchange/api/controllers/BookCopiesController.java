@@ -37,17 +37,6 @@ public class BookCopiesController {
         return bookCopies.stream().map(bookCopy -> mapper.map(bookCopy, BookRep.class)).toList();
     }
 
-    @GetMapping(value = "/user/me/copy/{copyId}")
-    public List<BookRep> getBookCopiesInUserCollection(
-            Principal principal,
-            @PathVariable long copyId,
-            @ParameterObject Pageable pageable
-    ) {
-        List<BookCopy> bookCopies = bookCopyRepository.findByOwnerEmailAndIdIs(principal.getName(), copyId, pageable);
-        log.info("Getting my copy {} for user {}", copyId, principal.getName());
-        return bookCopies.stream().map(bookCopy -> mapper.map(bookCopy, BookRep.class)).toList();
-    }
-
     @GetMapping("/user/{userId}")
     public List<BookRep> getBookCopiesByUserId(
             @PathVariable Long userId,
@@ -65,23 +54,14 @@ public class BookCopiesController {
                 .toList();
     }
 
-
-    @GetMapping("/user/{userId}/copy/{copyId}")
-    public List<BookRep> getBookCopyByUserIdAndCopyId(
-            @PathVariable Long userId,
-            @PathVariable Long copyId,
-            @ParameterObject Pageable pageable
+    @GetMapping("/{copyId}")
+    public BookRep getBookCopyByUserIdAndCopyId(
+            @PathVariable Long copyId
     ) {
-        List<BookCopy> bookCopies =
-                bookCopyRepository.findByOwnerIdAndIdAndAvailabilityTypeNot(
-                        userId, copyId, AvailabilityType.NONE, pageable
-                );
-
-        log.info("Getting copy {} of userId {}", copyId, userId);
-        log.info("Copies {}", bookCopies);
-        return bookCopies.stream()
-                .map(bookCopy -> mapper.map(bookCopy, BookRep.class))
-                .toList();
+        log.info("Getting copy {}", copyId);
+        BookCopy copy =
+                bookCopyRepository.findById(copyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return mapper.map(copy, BookRep.class);
     }
 
     @PostMapping(value = "/user/me")
