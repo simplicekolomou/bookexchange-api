@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ovh.bookexchange.api.controllers.representations.BookRep;
-import ovh.bookexchange.api.domains.entities.AvailabilityType;
 import ovh.bookexchange.api.domains.entities.BookCopy;
 import ovh.bookexchange.api.domains.entities.EndUser;
 import ovh.bookexchange.api.infrastructures.repos.BookCopyRepository;
@@ -30,21 +29,11 @@ public class BookCopiesController {
         this.endUserRepository = endUserRepository;
         this.mapper = mapper;
     }
+
     @GetMapping(value = "/user/me")
     public List<BookRep> getBookCopiesInUserCollection(Principal principal, @ParameterObject Pageable pageable) {
         List<BookCopy> bookCopies = bookCopyRepository.findByOwnerEmail(principal.getName(), pageable);
         log.info("Getting my copies for user {}: \n{}", principal.getName(), bookCopies);
-        return bookCopies.stream().map(bookCopy -> mapper.map(bookCopy, BookRep.class)).toList();
-    }
-
-    @GetMapping(value = "/user/me/copy/{copyId}")
-    public List<BookRep> getBookCopiesInUserCollection(
-            Principal principal,
-            @PathVariable long copyId,
-            @ParameterObject Pageable pageable
-    ) {
-        List<BookCopy> bookCopies = bookCopyRepository.findByOwnerEmailAndIdIs(principal.getName(), copyId, pageable);
-        log.info("Getting my copy {} for user {}", copyId, principal.getName());
         return bookCopies.stream().map(bookCopy -> mapper.map(bookCopy, BookRep.class)).toList();
     }
 
@@ -54,8 +43,8 @@ public class BookCopiesController {
             @ParameterObject Pageable pageable
     ) {
         List<BookCopy> bookCopies =
-                bookCopyRepository.findByOwnerIdAndAvailabilityTypeNot(
-                        userId, AvailabilityType.NONE, pageable
+                bookCopyRepository.findByOwnerId(
+                        userId, pageable
                 );
 
         log.info("Getting available copies of userId {}", userId);
@@ -65,31 +54,58 @@ public class BookCopiesController {
                 .toList();
     }
 
-
-    @GetMapping("/user/{userId}/copy/{copyId}")
-    public List<BookRep> getBookCopyByUserIdAndCopyId(
-            @PathVariable Long userId,
-            @PathVariable Long copyId,
-            @ParameterObject Pageable pageable
+    @GetMapping("/{copyId}")
+    public BookRep getBookCopyByUserIdAndCopyId(
+            @PathVariable Long copyId
     ) {
-        List<BookCopy> bookCopies =
-                bookCopyRepository.findByOwnerIdAndIdAndAvailabilityTypeNot(
-                        userId, copyId, AvailabilityType.NONE, pageable
-                );
-
-        log.info("Getting copy {} of userId {}", copyId, userId);
-        log.info("Copies {}", bookCopies);
-        return bookCopies.stream()
-                .map(bookCopy -> mapper.map(bookCopy, BookRep.class))
-                .toList();
+        log.info("Getting copy {}", copyId);
+        BookCopy copy =
+                bookCopyRepository.findById(copyId).orElseThrow(() -> {
+                    log.error("Copy not found {}", copyId);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND);
+                });
+        return mapper.map(copy, BookRep.class);
     }
 
     @PostMapping(value = "/user/me")
     public void addBookCopy(@RequestBody @Valid BookRep bookRep, Principal principal) {
         BookCopy bookCopy = mapper.map(bookRep, BookCopy.class);
-        EndUser owner = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
+        EndUser owner = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> {
+            log.error("User {} has no owner with email {}", principal.getName(), principal.getName());
+            return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found");
+        });
         bookCopy.setOwner(owner);
         bookCopy.setWarehouseItems(List.of());
         bookCopyRepository.save(bookCopy);
+        log.info("Added copy {} to user {}", bookCopy, owner);
     }
+
+    @PutMapping("/user/me")
+    public void updateBookCopy(@RequestBody @Valid BookRep bookRep, Principal principal) {
+        EndUser owner = endUserRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> {
+                    log.error("User not found for principal: {}", principal.getName());
+                    return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found");
+                });
+
+        BookCopy copyFromDb = bookCopyRepository.findByIdAndOwnerId(bookRep.getId(), owner.getId())
+                .orElseThrow(() -> {
+                    log.error("Book copy not found: id={}, owner={}", bookRep.getId(), owner.getId());
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Pre-existing book copy not found");
+                });
+
+        mapper.map(bookRep, copyFromDb);     // update the managed entity
+
+        // Force-update the authors collection because it's a list and the changement tracking is weird.
+        copyFromDb.getAuthors().clear();
+        copyFromDb.getAuthors().addAll(bookRep.getAuthors());
+
+        // make sure owner is not overridden by DTO
+        copyFromDb.setOwner(owner);
+
+        bookCopyRepository.save(copyFromDb);
+        log.info("Updated book copy {}", copyFromDb);
+    }
+
+
 }

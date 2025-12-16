@@ -3,7 +3,6 @@ package ovh.bookexchange.api.services;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ovh.bookexchange.api.domains.entities.EndUser;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class EndUserDetailsService implements UserDetailsService, JwtPasswordResetToken {
+public class EndUserDetailsService implements JwtPasswordResetToken {
     public final static String USER = "USER";
     public final static String ADMIN = "ADMIN";
 

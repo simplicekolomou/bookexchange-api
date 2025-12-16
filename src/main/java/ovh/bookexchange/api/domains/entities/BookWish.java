@@ -1,30 +1,24 @@
-package ovh.bookexchange.api.controllers.representations;
+package ovh.bookexchange.api.domains.entities;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ovh.bookexchange.api.domains.entities.AvailabilityType;
-import ovh.bookexchange.api.domains.entities.PhysicalState;
+
 import java.util.List;
 
 @ToString
+@Entity
 @Getter
 @Setter
-public class BookRep {
+public class BookWish {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Setter(AccessLevel.NONE)
     private long id;
-
-    @NotNull
-    private PhysicalState physicalState;
-
-    @NotNull
-    private AvailabilityType availabilityType;
-
-    @PositiveOrZero
-    private long askingPrice;
 
     @NotBlank
     private String title;
@@ -44,6 +38,7 @@ public class BookRep {
 
     private String description;
 
-    @PositiveOrZero
-    private long ownerId;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private EndUser owner;
 }

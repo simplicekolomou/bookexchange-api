@@ -41,6 +41,19 @@ public class EndUserController {
         return mapper.map(endUser, UserRep.class);
     }
 
+    @GetMapping("/{id}")
+    @ResponseBody
+    public UserRep getCurrentUser(@PathVariable String id) {
+        long l;
+        try {
+            l = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID is not a number");
+        }
+        EndUser endUser = endUserRepository.findById(l).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
+        return mapper.map(endUser, UserRep.class);
+    }
+
     /**
      * Update user information
      * @param userRep Une representation de l'utilisateur modififé.
