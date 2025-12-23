@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ovh.bookexchange.api.domains.entities.notifications.NotifSub;
 
 import java.util.List;
 
@@ -47,6 +48,9 @@ public class EndUser {
 
     @Embedded
     private Adress adress;
+
+    @Embedded
+    private NotifSub notifSub;
 
     @OneToMany(mappedBy = "endUsers")
     @NotNull

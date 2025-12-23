@@ -12,6 +12,7 @@ import java.util.List;
 
 @Service
 public class BooksSearch implements BookSearchInterface {
+    public static final String COVER_ENDPOINT = "https://play.google.com/books/content/images/frontcover/";
     BookClientInterface bookClientInterface;
 
     @Autowired
@@ -30,7 +31,7 @@ public class BooksSearch implements BookSearchInterface {
                     item.id(),
                     item.volumeInfo().title(),
                     item.volumeInfo().publishedDate(),
-                    "https://play.google.com/books/content/images/frontcover/" + item.id(),
+                    COVER_ENDPOINT + item.id(),
                     item.volumeInfo().industryIdentifiers(),
                     item.volumeInfo().authors(),
                     item.volumeInfo().description()

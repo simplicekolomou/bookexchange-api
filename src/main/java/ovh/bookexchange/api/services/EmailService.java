@@ -13,23 +13,23 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
 
-@Service
 public class EmailService {
     private static final Logger log = LoggerFactory.getLogger(JwtTokenService.class);
     private final MailSender mailSender;
     private final SimpleMailMessage templateMessage;
 
-    @Autowired
-    @Lazy
-    public EmailService(MailSender mailSender, SimpleMailMessage templateMessage) {
+    private final String resetLink;
+
+    public EmailService(MailSender mailSender, String resetLink, String from, String subject) {
         this.mailSender = mailSender;
-        this.templateMessage = templateMessage;
+        this.resetLink = resetLink;
+        this.templateMessage = templateMessage(from, subject);
     }
 
     public void sendResetPasswordMail(String to, String token) {
         SimpleMailMessage msg = new SimpleMailMessage(templateMessage);
         msg.setTo(to);
-        String resetLink = "http://localhost:5173/reset-password?token=" + token;
+        String resetLink = this.resetLink + token;
         msg.setText(
                 "Réinitialisation du mot de passe," +
                         "Cliquez sur ce lien pour réinitialiser votre mot de passe : " + resetLink
@@ -42,30 +42,11 @@ public class EmailService {
         }
     }
 
-    /**
-     * Configure le JavaMailSender pour utiliser SendGrid SMTP
-     * SendGrid SMTP est un service d'envoi d'e-mails transactionnels qui propose une API SMTP
-     * On utilise la formule gratuite qui permet d'envoyer jusqu'à 200 e-mails par jour
-     * Pour utiliser SendGrid SMTP, il faut créer un compte SendGrid et générer une API Key
-     * La documentation officielle de SendGrid SMTP est disponible ici : https://www.twilio.com/docs/sendgrid/for-developers/sending-email/integrating-with-the-smtp-api
-     * SendGrid nécessite une authentification avec un nom d'utilisateur et un mot de passe (API Key)
-     * @return JavaMailSender configuré pour SendGrid SMTP
-     */
-    @Bean
-    JavaMailSender mailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.sendgrid.net");
-        mailSender.setPort(587);
-        mailSender.setUsername("apikey");
-        mailSender.setPassword("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");
-        return mailSender;
-    }
 
-    @Bean
-    SimpleMailMessage templateMessage() {
+    private static SimpleMailMessage templateMessage(String from, String subject) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("jsktresor@gmail.com");
-        message.setSubject("Réinitialisation de mot de passe - BookExchange");
+        message.setFrom(from);
+        message.setSubject(subject);
         return message;
     }
 }

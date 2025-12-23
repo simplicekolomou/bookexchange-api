@@ -57,6 +57,19 @@ public class GoogleBookClient implements BookClientInterface {
         System.out.println(url);
         log.info("url: {}", url);
 
+        VolumesResponse response = makeApiCalls(url);
+        removeNonIsbnIdentifiers(response);
+        return response;
+
+    }
+
+    private void removeNonIsbnIdentifiers(VolumesResponse uncheckedIsbnResponse) {
+        uncheckedIsbnResponse.items().forEach(v -> {
+            v.volumeInfo().industryIdentifiers().removeIf(i -> !i.type().startsWith("ISBN_"));
+        });
+    }
+
+    private VolumesResponse makeApiCalls(String url) {
         int attempt = 0;
         RuntimeException last = null;
         while (attempt <= retries) {
@@ -74,7 +87,6 @@ public class GoogleBookClient implements BookClientInterface {
             }
         }
         throw last != null ? last : new RuntimeException("Google Books search failed");
-
     }
 
     private String buildGoogleBooksUrl(
