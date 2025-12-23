@@ -2,6 +2,9 @@ package ovh.bookexchange.api.controllers;
 
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,10 +17,12 @@ import ovh.bookexchange.api.domains.images.ImageStorable;
 import ovh.bookexchange.api.domains.entities.EndUser;
 import ovh.bookexchange.api.domains.images.NotAnImageException;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
+import ovh.bookexchange.api.services.EndUserDetailsService;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -26,11 +31,13 @@ public class EndUserController {
     private final ModelMapper mapper;
 
     private final ImageStorable imgStore;
+    private final EndUserDetailsService endUserDetailsService;
 
-    public EndUserController(EndUserRepository endUserRepository, ModelMapper mapper, ImageStorable imgStore) {
+    public EndUserController(EndUserRepository endUserRepository, ModelMapper mapper, ImageStorable imgStore, EndUserDetailsService endUserDetailsService) {
         this.endUserRepository = endUserRepository;
         this.mapper = mapper;
         this.imgStore = imgStore;
+        this.endUserDetailsService = endUserDetailsService;
     }
 
     @GetMapping("/me")
@@ -115,5 +122,31 @@ public class EndUserController {
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error getting profile picture");
         }
+    }
+
+    @GetMapping("/search")
+    public List<UserRep> userSuggestions(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String q,
+            @ParameterObject Pageable pageable
+    ) {
+
+        Page<EndUser> users = endUserDetailsService.search(firstName, lastName, q, pageable);
+        return users.stream().map(user -> {
+            UserRep userRep = mapper.map(user, UserRep.class);
+            if (user.getProfilePicture() != null) {
+                try {
+                    byte[] imageData = imgStore.getImageData(user.getId(), user.getProfilePicture());
+                    String imageUri = String.format("data:image/%s;base64,%s",
+                            user.getProfilePicture(),
+                            java.util.Base64.getEncoder().encodeToString(imageData));
+                    userRep.setProfilePicture(imageUri);
+                } catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors du chargement de la photo de profil");
+                }
+            }
+            return userRep;
+        }).toList();
     }
 }

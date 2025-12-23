@@ -1,5 +1,8 @@
 package ovh.bookexchange.api.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,5 +47,30 @@ public class EndUserDetailsService implements JwtPasswordResetToken {
             return loadUserByUsername(username);
         }
         return null;
+    }
+
+    /**
+     * Cherche des utilisateurs selon les critères donnés.
+     * @param firstName Le prénom à chercher (optionnel). Si null ou vide, ce critère est ignoré.
+     * @param lastName  Le nom de famille à chercher (optionnel). Si null ou vide, ce critère est ignoré.
+     * @param q         Une chaîne de recherche globale (optionnelle). Si fournie, elle est utilisée pour chercher dans les prénoms et noms.
+     * @param pageable  Les informations de pagination.
+     * @return          Retourne une page d'utilisateurs correspondant aux critères de recherche.
+     */
+    public Page<EndUser> search(String firstName, String lastName, String q, Pageable pageable) {
+        Specification<EndUser> spec = Specification.where(null);
+
+        if (q != null && !q.isBlank()) {
+            spec = spec.and(EndUserSpecifications.nameContains(q));
+        } else {
+            if (firstName != null && !firstName.isBlank()) {
+                spec = spec.and(EndUserSpecifications.firstNameContains(firstName));
+            }
+            if (lastName != null && !lastName.isBlank()) {
+                spec = spec.and(EndUserSpecifications.lastNameContains(lastName));
+            }
+        }
+
+        return endUserRepository.findAll(spec, pageable);
     }
 }

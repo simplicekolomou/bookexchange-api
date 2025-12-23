@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import ovh.bookexchange.api.domains.entities.BookCopy;
 import ovh.bookexchange.api.domains.entities.EndUser;
 import ovh.bookexchange.api.infrastructures.repos.BookCopyRepository;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
+import ovh.bookexchange.api.services.BookCopyService;
 
 import java.security.Principal;
 import java.util.List;
@@ -24,10 +26,12 @@ public class BookCopiesController {
     private final BookCopyRepository bookCopyRepository;
     private final EndUserRepository endUserRepository;
     private final ModelMapper mapper;
-    public BookCopiesController(BookCopyRepository bookCopyRepository, EndUserRepository endUserRepository, ModelMapper mapper) {
+    private final BookCopyService bookCopyService;
+    public BookCopiesController(BookCopyRepository bookCopyRepository, EndUserRepository endUserRepository, ModelMapper mapper, BookCopyService bookCopyService) {
         this.bookCopyRepository = bookCopyRepository;
         this.endUserRepository = endUserRepository;
         this.mapper = mapper;
+        this.bookCopyService = bookCopyService;
     }
 
     @GetMapping(value = "/user/me")
@@ -107,5 +111,16 @@ public class BookCopiesController {
         log.info("Updated book copy {}", copyFromDb);
     }
 
-
+    @GetMapping("/search/book")
+    public List<BookRep> bookSuggestions(
+            @RequestParam(required = false) String isbn,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String availability,
+            @RequestParam(required = false) String bookState,
+            @ParameterObject Pageable pageable
+    ) {
+        Page<BookCopy> bookCopies = bookCopyService.search(isbn, author, title, availability , bookState, pageable);
+        return bookCopies.stream().map(bookCopy -> mapper.map(bookCopy, BookRep.class)).toList();
+    }
 }
