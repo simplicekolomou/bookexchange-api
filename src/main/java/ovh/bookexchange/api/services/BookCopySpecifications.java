@@ -31,5 +31,11 @@ public class BookCopySpecifications {
         return (root, query, cb) ->
                 cb.equal(root.get("physicalState"), bookState);
     }
+
+    // Suggérer seulement les copies de livres n'appartenant pas à l'utilisateur connecté
+    public static Specification<BookCopy> notOwnedByUser(Long userId) {
+        return (root, query, cb) ->
+                cb.notEqual(root.get("owner").get("id"), userId);
+    }
 }
 

@@ -28,7 +28,7 @@ public class BookCopyService {
      * @param pageable      Les informations de pagination.
      * @return Une page de copies de livres correspondant aux critères de recherche.
      */
-    public Page<BookCopy> search(String isbn, String author, String title, String availability, String bookState, Pageable pageable) {
+    public Page<BookCopy> search(String isbn, String author, String title, String availability, String bookState, Pageable pageable, Long idUser) {
         Specification<BookCopy> spec = Specification.where(null);
 
         if (isbn != null && !isbn.isBlank()) {
@@ -43,8 +43,11 @@ public class BookCopyService {
             spec = spec.and(BookCopySpecifications.authorContains(author));
         }
 
-        if (availability != null && availability.equals("true")) {
-            spec = spec.and(BookCopySpecifications.isAvailable());
+        if (idUser != null) {
+            spec = spec.and(BookCopySpecifications.notOwnedByUser(idUser));
+            if ("true".equals(availability)) {
+                spec = spec.and(BookCopySpecifications.isAvailable());
+            }
         }
 
         if (bookState != null && !bookState.isBlank()) {

@@ -118,9 +118,15 @@ public class BookCopiesController {
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String availability,
             @RequestParam(required = false) String bookState,
-            @ParameterObject Pageable pageable
+            @ParameterObject Pageable pageable,
+            Principal principal
     ) {
-        Page<BookCopy> bookCopies = bookCopyService.search(isbn, author, title, availability , bookState, pageable);
+        Long idUser = principal != null ? endUserRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> {
+                    log.error("User not found for principal: {}", principal.getName());
+                    return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found");
+                }).getId() : null;
+        Page<BookCopy> bookCopies = bookCopyService.search(isbn, author, title, availability , bookState, pageable, idUser);
         return bookCopies.stream().map(bookCopy -> mapper.map(bookCopy, BookRep.class)).toList();
     }
 }

@@ -106,7 +106,6 @@ public class AuthenticationController {
 
         // Vérifier l'ancien mot de passe
         if (!passwordEncoder.matches(request.getCurrentPassword(), endUser.getPassword())) {
-            System.out.println("Les mots de passe ne correspondent pas : " + request.getCurrentPassword() + " / " + endUser.getPassword());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Old password is incorrect");
         }
 
