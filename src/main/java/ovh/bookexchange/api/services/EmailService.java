@@ -1,11 +1,11 @@
 package ovh.bookexchange.api.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-
 
 public class EmailService {
     private static final Logger log = LoggerFactory.getLogger(JwtTokenService.class);
@@ -31,6 +31,7 @@ public class EmailService {
 
         try {
             mailSender.send(msg);
+            log.info("E-mail de réinitialisation du mot de passe envoyé à : {}", to);
         } catch (MailException ex) {
             log.error("Erreur lors de l'envoi de l'e-mail de réinitialisation du mot de passe à {} : {}", to, ex.getMessage());
         }
