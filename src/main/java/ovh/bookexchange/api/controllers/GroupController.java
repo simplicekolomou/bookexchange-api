@@ -34,33 +34,59 @@ public class GroupController {
     @PostMapping
     public void createGroup(@RequestBody @Valid GroupChatRep groupChatRep) {
         GroupChat group = mapper.map(groupChatRep, GroupChat.class);
-        group.setMembers(
-                groupChatRep.getMembers().stream().map(mr -> {
-                    Membership ms = new Membership();
-                    ms.setGroupChat(group);
-                    ms.setEndUser(userRepo.findById(mr.getEndUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")));
-                    ms.setNotification(mr.isNotification());
-                    return ms;
-                }).toList()
-        );
+        setGroupMembers(groupChatRep, group);
         group.setMessages(List.of());
         groupRepo.save(group);
     }
 
     @GetMapping("/user/me")
     public List<GroupChatRep> getMyGroups(Principal principal) {
-        EndUser user = userRepo.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Logged in user not found"));
+        EndUser user = findUserOr500(principal);
         List<Membership> memberships = user.getMemberships();
         return memberships.stream().map(m -> mapper.map(m.getGroupChat(), GroupChatRep.class)).toList();
     }
 
     @DeleteMapping("/{id}")
     public void deleteGroup(@PathVariable long id, Principal principal) {
-        EndUser user = userRepo.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Logged in user not found"));
-        GroupChat group = groupRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found"));
+        EndUser user = findUserOr500(principal);
+        GroupChat group = findGroupOr404(id);
         if (!group.isMember(user)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         groupRepo.delete(group);
+    }
+
+    @PutMapping("/{id}")
+    public void editGroup(@PathVariable long id, @RequestBody GroupChatRep groupChatRep, Principal principal) {
+        EndUser user = findUserOr500(principal);
+        GroupChat group = findGroupOr404(id);
+        if (!group.isMember(user)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        setGroupMembers(groupChatRep, group);
+        groupRepo.save(group);
+    }
+
+    private void setGroupMembers(GroupChatRep groupChatRep, GroupChat group) {
+        group.setMembers(
+                groupChatRep.getMembers().stream().map(mr -> {
+                    Membership ms = new Membership();
+                    ms.setGroupChat(group);
+                    ms.setEndUser(userRepo.findById(mr.getEndUserId()).orElseThrow(()
+                            -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")));
+                    ms.setNotification(mr.isNotification());
+                    return ms;
+                }).toList()
+        );
+    }
+
+    private GroupChat findGroupOr404(long id) {
+        GroupChat group = groupRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found"));
+        return group;
+    }
+
+    private EndUser findUserOr500(Principal principal) {
+        return userRepo.findByEmail(principal.getName()).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Logged in user not found"));
     }
 }
