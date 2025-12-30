@@ -45,7 +45,7 @@ public class MessageController {
         msg.setContent(message.getContent());
         msg.setGroupChat(groupChat);
         msg.setSender(sender);
-        msg.setSendTime(Timestamp.valueOf(LocalDateTime.now())); //TODO set now timestamp
+        msg.setSendTime(Timestamp.valueOf(LocalDateTime.now()));
         msg.setRead(List.of());
         messageRepo.save(msg);
     }
