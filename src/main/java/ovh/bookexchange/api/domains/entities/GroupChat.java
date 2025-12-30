@@ -18,7 +18,7 @@ public class GroupChat {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @OneToMany(mappedBy = "groupChat", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToMany(mappedBy = "groupChat", cascade = CascadeType.ALL)
     @NotNull
     List<Membership> members;
 

@@ -53,4 +53,14 @@ public class GroupController {
         List<Membership> memberships = user.getMemberships();
         return memberships.stream().map(m -> mapper.map(m.getGroupChat(), GroupChatRep.class)).toList();
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteGroup(@PathVariable long id, Principal principal) {
+        EndUser user = userRepo.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Logged in user not found"));
+        GroupChat group = groupRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found"));
+        if (!group.isMember(user)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        groupRepo.delete(group);
+    }
 }
