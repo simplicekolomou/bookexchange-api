@@ -53,10 +53,4 @@ public class GroupController {
         List<Membership> memberships = user.getMemberships();
         return memberships.stream().map(m -> mapper.map(m.getGroupChat(), GroupChatRep.class)).toList();
     }
-
-    @GetMapping("/{id}")
-    public GroupChatRep getGroup(@PathVariable Long id) {
-        GroupChat group = groupRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found"));
-        return mapper.map(group, GroupChatRep.class);
-    }
 }
