@@ -52,7 +52,7 @@ public class EndUser {
     @Embedded
     private NotifSub notifSub;
 
-    @OneToMany(mappedBy = "endUsers")
+    @OneToMany(mappedBy = "endUser")
     @NotNull
     private List<Membership> memberships;
 

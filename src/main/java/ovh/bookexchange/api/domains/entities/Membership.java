@@ -18,7 +18,7 @@ public class Membership {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private EndUser endUsers;
+    private EndUser endUser;
 
     @ManyToOne
     @JoinColumn(nullable = false)
