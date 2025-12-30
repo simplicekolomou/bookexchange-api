@@ -25,4 +25,8 @@ public class GroupChat {
     @OneToMany(mappedBy = "groupChat", cascade = CascadeType.ALL)
     @NotNull
     List<Message> messages;
+
+    public boolean isMember(EndUser user) {
+        return members.stream().anyMatch(m -> m.getEndUser().getId() == user.getId());
+    }
 }

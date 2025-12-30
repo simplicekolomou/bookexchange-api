@@ -6,12 +6,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import ovh.bookexchange.api.controllers.representations.GroupChatRep;
-import ovh.bookexchange.api.controllers.representations.MembershipRep;
+import ovh.bookexchange.api.controllers.representations.messages.GroupChatRep;
 import ovh.bookexchange.api.domains.entities.EndUser;
 import ovh.bookexchange.api.domains.entities.GroupChat;
 import ovh.bookexchange.api.domains.entities.Membership;
-import ovh.bookexchange.api.domains.entities.Message;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
 import ovh.bookexchange.api.infrastructures.repos.GroupChatRepository;
 

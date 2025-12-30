@@ -1,4 +1,4 @@
-package ovh.bookexchange.api.controllers.representations;
+package ovh.bookexchange.api.controllers.representations.messages;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
