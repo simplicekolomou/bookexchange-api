@@ -79,8 +79,16 @@ public class GroupController {
                     return ms;
                 }).toList()
         );
+        if (groupChatRep.getName() == null || groupChatRep.getName().isBlank()) {
+            group.setName(
+                group.getMembers().stream()
+                        .map(membership -> membership.getEndUser().getFirstName())
+                        .collect(java.util.stream.Collectors.joining(", "))
+            );
+            return;
+        }
+        group.setName(groupChatRep.getName());
 
-        group.setName(groupChatRep.getName().isBlank() ? "Unnamed group" : groupChatRep.getName());
     }
 
     private GroupChat findGroupOr404(long id) {
