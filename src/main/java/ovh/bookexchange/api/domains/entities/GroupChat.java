@@ -1,7 +1,7 @@
 package ovh.bookexchange.api.domains.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,6 +17,9 @@ public class GroupChat {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
+    @NotBlank
+    private String name;
 
     @OneToMany(mappedBy = "groupChat", cascade = CascadeType.ALL)
     @NotNull

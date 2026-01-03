@@ -34,7 +34,7 @@ public class GroupController {
     @PostMapping
     public void createGroup(@RequestBody @Valid GroupChatRep groupChatRep) {
         GroupChat group = mapper.map(groupChatRep, GroupChat.class);
-        setGroupMembers(groupChatRep, group);
+        setMembersAndName(groupChatRep, group);
         group.setMessages(List.of());
         groupRepo.save(group);
     }
@@ -57,17 +57,18 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
-    public void editGroup(@PathVariable long id, @RequestBody GroupChatRep groupChatRep, Principal principal) {
+    public void editGroup(@PathVariable long id, @RequestBody @Valid GroupChatRep groupChatRep, Principal principal) {
         EndUser user = findUserOr500(principal);
         GroupChat group = findGroupOr404(id);
         if (!group.isMember(user)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        setGroupMembers(groupChatRep, group);
+        setMembersAndName(groupChatRep, group);
         groupRepo.save(group);
     }
 
-    private void setGroupMembers(GroupChatRep groupChatRep, GroupChat group) {
+    private void setMembersAndName(GroupChatRep groupChatRep, GroupChat group) {
+        //TODO this should be in domain or model mapper config.
         group.setMembers(
                 groupChatRep.getMembers().stream().map(mr -> {
                     Membership ms = new Membership();
@@ -78,11 +79,12 @@ public class GroupController {
                     return ms;
                 }).toList()
         );
+
+        group.setName(groupChatRep.getName().isBlank() ? "Unnamed group" : groupChatRep.getName());
     }
 
     private GroupChat findGroupOr404(long id) {
-        GroupChat group = groupRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found"));
-        return group;
+        return groupRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found"));
     }
 
     private EndUser findUserOr500(Principal principal) {

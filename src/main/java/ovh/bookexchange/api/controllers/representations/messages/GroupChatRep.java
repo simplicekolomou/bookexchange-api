@@ -12,6 +12,8 @@ import java.util.List;
 public class GroupChatRep {
     private long id;
 
+    private String name;
+
     @Valid
     @Size(min = 2, max = 20)
     private List<MembershipRep> members;
