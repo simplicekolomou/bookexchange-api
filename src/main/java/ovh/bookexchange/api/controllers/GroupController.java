@@ -15,6 +15,7 @@ import ovh.bookexchange.api.infrastructures.repos.GroupChatRepository;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -69,7 +70,9 @@ public class GroupController {
 
     private void setMembersAndName(GroupChatRep groupChatRep, GroupChat group) {
         //TODO this should be in domain or model mapper config.
-        group.setMembers(
+        List<Membership> members = group.getMembers();
+        members.clear();
+        members.addAll(
                 groupChatRep.getMembers().stream().map(mr -> {
                     Membership ms = new Membership();
                     ms.setGroupChat(group);
@@ -77,7 +80,7 @@ public class GroupController {
                             -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")));
                     ms.setNotification(mr.isNotification());
                     return ms;
-                }).toList()
+                }).collect(Collectors.toList())
         );
         if (groupChatRep.getName() == null || groupChatRep.getName().isBlank()) {
             group.setName(

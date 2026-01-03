@@ -21,7 +21,7 @@ public class GroupChat {
     @NotBlank
     private String name;
 
-    @OneToMany(mappedBy = "groupChat", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "groupChat", cascade = CascadeType.ALL, orphanRemoval = true)
     @NotNull
     List<Membership> members;
 
