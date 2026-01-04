@@ -6,6 +6,7 @@ import ovh.bookexchange.api.domains.entities.notifications.NotifSub;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,9 +19,9 @@ public class NotificationService {
 
     public NotificationService(EndUserRepository endUserRepository, String vapidPublicKey, String vapidPrivateKey, String vapidClaim) {
         this.endUserRepository = endUserRepository;
-        this.vapidPrivateKey = vapidPrivateKey;
-        this.vapidPublicKey = vapidPublicKey;
-        this.vapidClaim = vapidClaim;
+        this.vapidPrivateKey = Objects.requireNonNull(vapidPrivateKey);
+        this.vapidPublicKey = Objects.requireNonNull(vapidPublicKey);
+        this.vapidClaim = Objects.requireNonNull(vapidClaim);
     }
 
     private final EndUserRepository endUserRepository;
@@ -57,7 +58,7 @@ public class NotificationService {
                 log.error("Error sending notification, inReasonableTime: {}, responseStatus: {}", inReasonableTime, responseStatus);
             }
 
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException | NullPointerException | IOException e) {
             log.error("Error sending notification", e);
         }
     }
