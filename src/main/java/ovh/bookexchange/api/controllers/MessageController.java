@@ -56,6 +56,8 @@ public class MessageController {
 
     private void sendNotifications(Message msg) {
         msg.getGroupChat().getMembers().forEach(membership -> {
+            if (membership.getEndUser().getId() == msg.getSender().getId()) return;
+            if (!membership.isNotification()) return;
             notifService.sendNotification(msg.getSender().getFirstName(), msg.getContent(), membership.getEndUser().getEmail());
         });
     }
