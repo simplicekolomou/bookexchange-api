@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ovh.bookexchange.api.controllers.representations.messages.GroupChatRep;
+import ovh.bookexchange.api.controllers.representations.messages.MembershipRep;
 import ovh.bookexchange.api.domains.entities.EndUser;
 import ovh.bookexchange.api.domains.entities.GroupChat;
 import ovh.bookexchange.api.domains.entities.Membership;
@@ -101,5 +102,21 @@ public class GroupController {
     private EndUser findUserOr500(Principal principal) {
         return userRepo.findByEmail(principal.getName()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Logged in user not found"));
+    }
+
+    @GetMapping("/oneToOne/{memberId}")
+    public GroupChatRep getGroupByMembers(@PathVariable Long memberId, Principal principal) {
+        EndUser currentUser = findUserOr500(principal);
+        EndUser targetUser = userRepo.findById(memberId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Target user not found"));
+        List<GroupChat> groups = findUserOr500(principal).getMemberships().stream()
+                .map(Membership::getGroupChat)
+                .filter(groupChat -> groupChat.isMember(targetUser) && groupChat.getMembers().size() == 2)
+                .toList();
+
+        if (groups.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "One-to-one group not found");
+        }
+        return mapper.map(groups.get(0), GroupChatRep.class);
     }
 }

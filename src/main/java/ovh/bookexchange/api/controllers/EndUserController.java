@@ -149,4 +149,10 @@ public class EndUserController {
             return userRep;
         }).toList();
     }
+
+    @GetMapping("/all")
+    public Page<UserRep> getAllUsers(@ParameterObject Pageable pageable) {
+        Page<EndUser> users = endUserRepository.findAll(null, pageable);
+        return users.map(user -> mapper.map(user, UserRep.class));
+    }
 }
