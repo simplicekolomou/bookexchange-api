@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ovh.bookexchange.api.controllers.representations.UserRep;
+import ovh.bookexchange.api.domains.entities.Adress;
 import ovh.bookexchange.api.domains.images.BadImageTypeException;
 import ovh.bookexchange.api.domains.images.ImageStorable;
 import ovh.bookexchange.api.domains.entities.EndUser;
@@ -142,6 +143,7 @@ public class EndUserController {
                             user.getProfilePicture(),
                             java.util.Base64.getEncoder().encodeToString(imageData));
                     userRep.setProfilePicture(imageUri);
+                    removeInfoFromAndress(userRep);
                 } catch (IOException e) {
                     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors du chargement de la photo de profil");
                 }
@@ -153,6 +155,19 @@ public class EndUserController {
     @GetMapping("/all")
     public Page<UserRep> getAllUsers(@ParameterObject Pageable pageable) {
         Page<EndUser> users = endUserRepository.findAll(null, pageable);
-        return users.map(user -> mapper.map(user, UserRep.class));
+        return users.map(user -> {
+            UserRep userRep = mapper.map(user, UserRep.class);
+            removeInfoFromAndress(userRep);
+            return userRep;
+        });
+    }
+
+    private void removeInfoFromAndress(UserRep userRep) {
+        Adress allInfo = userRep.getAdress();
+        Adress partialInfo = new Adress();
+        partialInfo.setCountry(allInfo.getCountry());
+        partialInfo.setLocality(allInfo.getLocality());
+        partialInfo.setZipCode(allInfo.getZipCode());
+        userRep.setAdress(partialInfo);
     }
 }
