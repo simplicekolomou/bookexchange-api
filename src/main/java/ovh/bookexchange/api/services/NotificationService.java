@@ -6,6 +6,7 @@ import ovh.bookexchange.api.domains.entities.notifications.NotifSub;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,9 +19,9 @@ public class NotificationService {
 
     public NotificationService(EndUserRepository endUserRepository, String vapidPublicKey, String vapidPrivateKey, String vapidClaim) {
         this.endUserRepository = endUserRepository;
-        this.vapidPrivateKey = vapidPrivateKey;
-        this.vapidPublicKey = vapidPublicKey;
-        this.vapidClaim = vapidClaim;
+        this.vapidPrivateKey = Objects.requireNonNull(vapidPrivateKey);
+        this.vapidPublicKey = Objects.requireNonNull(vapidPublicKey);
+        this.vapidClaim = Objects.requireNonNull(vapidClaim);
     }
 
     private final EndUserRepository endUserRepository;
@@ -34,14 +35,14 @@ public class NotificationService {
      * @param title The title of the notification
      * @param body The body of the notification
      * @param email The email of the user to send the notification to
-     * @throws IllegalArgumentException if no users exists with the given email.
      */
     public void sendNotification(String title, String body, String email) {
         try {
             EndUser user = endUserRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("No user found with email: " + email ));
             NotifSub notifSub = user.getNotifSub();
             if (notifSub == null) {
-                throw new IllegalArgumentException("User has no subscription");
+                log.info("No subscription found for user {}", email);
+                return;
             }
             log.info("Sending notification to {}", email);
             ProcessBuilder pb = new ProcessBuilder();
@@ -57,7 +58,7 @@ public class NotificationService {
                 log.error("Error sending notification, inReasonableTime: {}, responseStatus: {}", inReasonableTime, responseStatus);
             }
 
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException | NullPointerException | IOException e) {
             log.error("Error sending notification", e);
         }
     }

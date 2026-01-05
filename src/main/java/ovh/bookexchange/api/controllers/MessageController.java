@@ -15,6 +15,7 @@ import ovh.bookexchange.api.domains.entities.Message;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
 import ovh.bookexchange.api.infrastructures.repos.GroupChatRepository;
 import ovh.bookexchange.api.infrastructures.repos.MessageRepository;
+import ovh.bookexchange.api.services.NotificationService;
 
 import java.security.Principal;
 import java.sql.Timestamp;
@@ -29,12 +30,14 @@ public class MessageController {
     private final GroupChatRepository groupChatRepo;
     private final EndUserRepository userRepo;
     private final ModelMapper mapper;
+    private final NotificationService notifService;
 
-    public MessageController(MessageRepository messageRepo, GroupChatRepository groupChatRepo, EndUserRepository userRepo, ModelMapper mapper) {
+    public MessageController(MessageRepository messageRepo, GroupChatRepository groupChatRepo, EndUserRepository userRepo, NotificationService notifService, ModelMapper mapper) {
         this.messageRepo = messageRepo;
         this.groupChatRepo = groupChatRepo;
         this.userRepo = userRepo;
         this.mapper = mapper;
+        this.notifService = notifService;
     }
 
     @PostMapping("/group/{id}")
@@ -48,6 +51,15 @@ public class MessageController {
         msg.setSendTime(Timestamp.valueOf(LocalDateTime.now()));
         msg.setRead(List.of());
         messageRepo.save(msg);
+        sendNotifications(msg);
+    }
+
+    private void sendNotifications(Message msg) {
+        msg.getGroupChat().getMembers().forEach(membership -> {
+            if (membership.getEndUser().getId() == msg.getSender().getId()) return;
+            if (!membership.isNotification()) return;
+            notifService.sendNotification(msg.getSender().getFirstName(), msg.getContent(), membership.getEndUser().getEmail());
+        });
     }
 
     @GetMapping("/group/{id}")
