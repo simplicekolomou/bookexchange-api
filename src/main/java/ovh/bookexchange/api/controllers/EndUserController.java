@@ -164,10 +164,12 @@ public class EndUserController {
 
     private void removeInfoFromAndress(UserRep userRep) {
         Adress allInfo = userRep.getAdress();
-        Adress partialInfo = new Adress();
-        partialInfo.setCountry(allInfo.getCountry());
-        partialInfo.setLocality(allInfo.getLocality());
-        partialInfo.setZipCode(allInfo.getZipCode());
-        userRep.setAdress(partialInfo);
+        if ( allInfo != null) {
+            Adress partialInfo = new Adress();
+            partialInfo.setCountry(allInfo.getCountry());
+            partialInfo.setLocality(allInfo.getLocality());
+            partialInfo.setZipCode(allInfo.getZipCode());
+            userRep.setAdress(partialInfo);
+        }
     }
 }
