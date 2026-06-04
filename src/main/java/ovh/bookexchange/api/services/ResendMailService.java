@@ -37,7 +37,7 @@ public class ResendMailService {
 
     public void sendResetPasswordMail(String to, String token) {
         String fullResetLink = resetLink + token;
-        String emailBody = "Réinitialisation du mot de passe,\n\n"
+        String emailBody = "Réinitialisation du mot de passe - BookExchange,\n\n"
                 + "Cliquez sur ce lien pour réinitialiser votre mot de passe :\n"
                 + fullResetLink;
 

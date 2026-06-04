@@ -8,9 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -91,11 +88,11 @@ public class ApiConfiguration {
      * SendGrid SMTP est un service d'envoi d'e-mails transactionnels qui propose une API SMTP
      * On utilise la formule gratuite qui permet d'envoyer jusqu'à 200 e-mails par jour
      * Pour utiliser SendGrid SMTP, il faut créer un compte SendGrid et générer une API Key
-     * La documentation officielle de SendGrid SMTP est disponible ici : https://www.twilio.com/docs/sendgrid/for-developers/sending-email/integrating-with-the-smtp-api
+     * La documentation officielle de SendGrid SMTP est disponible ici : <a href="https://www.twilio.com/docs/sendgrid/for-developers/sending-email/integrating-with-the-smtp-api">...</a>
      * SendGrid nécessite une authentification avec un nom d'utilisateur et un mot de passe (API Key)
      * @return JavaMailSender configuré pour SendGrid SMTP
      */
-    @Bean
+    /*@Bean
     JavaMailSender mailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(environment.getProperty("smtp.host","smtp.sendgrid.net"));
@@ -106,10 +103,15 @@ public class ApiConfiguration {
     }
 
     @Bean
-    ResendMailService emailService() {
+    EmailService emailService(JavaMailSender mailSender) {
         String resetLink = environment.getProperty("reset.link", "http://localhost:5173/reset-password?token=");
-        String from = environment.getProperty("mail.from", "bookexchange@gmail.com");
+        String from = environment.getProperty("mail.from", "jsktresor@gmail.com");
         String subject = environment.getProperty("mail.subject", "Réinitialisation de mot de passe - BookExchange");
+        return new EmailService(mailSender, resetLink, from, subject);
+    }*/
+
+    @Bean
+    ResendMailService emailService() {
         return new ResendMailService(environment);
     }
 }
