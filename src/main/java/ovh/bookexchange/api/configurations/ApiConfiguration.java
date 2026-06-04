@@ -36,17 +36,17 @@ public class ApiConfiguration {
     @Bean
     public DataSource dataSource() {
         DataSourceBuilder dsBuilder = DataSourceBuilder.create();
-        dsBuilder.url(environment.getProperty("db.url", "jdbc:postgresql://localhost:5432/postgres"));
-        dsBuilder.driverClassName(environment.getProperty("db.driver.class.name","org.postgresql.Driver"));
-        dsBuilder.username(environment.getProperty("db.username", "postgres"));
-        dsBuilder.password(environment.getProperty("db.password", "password"));
+        dsBuilder.url(environment.getProperty("DB_URL"));
+        dsBuilder.driverClassName(environment.getProperty("DB_DRIVER_CLASS_NAME"));
+        dsBuilder.username(environment.getProperty("DB_USERNAME"));
+        dsBuilder.password(environment.getProperty("DB_PASSWORD"));
         return dsBuilder.build();
     }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setGenerateDdl(environment.getProperty("db.ddl.auto", Boolean.class, false));
+        vendorAdapter.setGenerateDdl(environment.getProperty("DB_DDL_AUTO", Boolean.class, false));
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("ovh.bookexchange.api.domains.entities");
@@ -80,9 +80,9 @@ public class ApiConfiguration {
 
     @Bean
     public NotificationService notificationService(EndUserRepository endUserRepository) {
-        String privateKey = environment.getProperty("vapid.private.key");
-        String publicKey = environment.getProperty("vapid.public.key", "BBDyKyvknQuhwMLj-YhZrpUS6M0ZvVcCZYnm0C9R8Ir_ucJT_JPfUboTsKeCvjnrTPJQ-x2XA-dCzjrw0ONldqs");
-        String claim = environment.getProperty("vapid.claim");
+        String privateKey = environment.getProperty("VAPID_PRIVATE_KEY");
+        String publicKey = environment.getProperty("VAPID_PUBLIC_KEY");
+        String claim = environment.getProperty("VAPID_CLAIM");
         return new NotificationService(endUserRepository, publicKey, privateKey, claim);
     }
 
@@ -97,6 +97,7 @@ public class ApiConfiguration {
      */
     @Bean
     JavaMailSender mailSender() {
+        System.out.println("Propriétés chargées : " + Arrays.toString(environment.getActiveProfiles()));
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(environment.getProperty("smtp.host","smtp.sendgrid.net"));
         mailSender.setPort(environment.getProperty("smtp.port",Integer.class,587));
@@ -108,7 +109,7 @@ public class ApiConfiguration {
     @Bean
     EmailService emailService(JavaMailSender mailSender) {
         String resetLink = environment.getProperty("reset.link", "http://localhost:5173/reset-password?token=");
-        String from = environment.getProperty("mail.from", "jsktresor@gmail.com");
+        String from = environment.getProperty("mail.from", "bookexchange@gmail.com");
         String subject = environment.getProperty("mail.subject", "Réinitialisation de mot de passe - BookExchange");
         return new EmailService(mailSender, resetLink, from, subject);
     }

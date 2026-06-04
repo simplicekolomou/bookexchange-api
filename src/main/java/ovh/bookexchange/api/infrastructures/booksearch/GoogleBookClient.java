@@ -1,7 +1,7 @@
 package ovh.bookexchange.api.infrastructures.booksearch;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -19,16 +19,12 @@ public class GoogleBookClient implements BookClientInterface {
     private final int retries;
     private final String apiKey;
 
-    public GoogleBookClient(
-            @Value("${app.books.gb.base-url}") String baseUrl,
-            @Value("${app.books.gb.connect-timeout-ms}") int connectTimeoutMs,
-            @Value("${app.books.gb.read-timeout-ms}") int readTimeoutMs,
-            @Value("${app.books.gb.retries}") int retries,
-            @Value("${app.books.gb.api-key}") String apiKey
-    ) {
-        this.baseUrl = baseUrl;
-        this.retries = Math.max(0, retries);
-        this.apiKey = apiKey;
+    public GoogleBookClient(Environment environment) {
+        this.baseUrl = environment.getProperty("APP_BOOKS_GB_BASE_URL");
+        int connectTimeoutMs = environment.getProperty("APP_BOOKS_GB_CONNECT_TIMEOUT_MS", Integer.class, 5000);
+        int readTimeoutMs = environment.getProperty("APP_BOOKS_GB_READ_TIMEOUT_MS", Integer.class, 10000);
+        this.retries = Math.max(0, environment.getProperty("APP_BOOKS_GB_RETRIES", Integer.class, 3));
+        this.apiKey = environment.getProperty("APP_BOOKS_GB_API_KEY");
 
         var rf = new SimpleClientHttpRequestFactory();
         rf.setConnectTimeout(connectTimeoutMs);
@@ -36,20 +32,19 @@ public class GoogleBookClient implements BookClientInterface {
 
         this.client = RestClient.builder()
                 .requestFactory(rf)
-                .baseUrl(baseUrl)
+                .baseUrl(this.baseUrl)
                 .defaultHeader("User-Agent", "BookService/1.0 (Contact=theo.andernack@gmail.com")
                 .build();
     }
 
     /**
      * Méthode pour faire une recherche sur les livres de Google Books
-     *
      * <a href="https://developers.google.com/books/docs/v1/using?hl=fr">Doc Google Books API</a>
      * @param title         Le titre de l'œuvre
      * @param author        L'autheur de l'œuvre
      * @param startIndex    position dans la collection à partir de laquelle commencer. L'indice du premier élément est 0.
      * @param maxResults    nombre maximal de résultats à renvoyer. La valeur par défaut est 10 et la valeur maximale autorisée est 40.
-     * @return
+     * @return Un objet VolumesResponse contenant les résultats de la recherche
      */
     public VolumesResponse searchWorks(String title, String author, int startIndex, int maxResults) {
         String url = buildGoogleBooksUrl(baseUrl, apiKey, title, author, "fr", startIndex, maxResults, "relevance", "books");
@@ -64,9 +59,9 @@ public class GoogleBookClient implements BookClientInterface {
     }
 
     private void removeNonIsbnIdentifiers(VolumesResponse uncheckedIsbnResponse) {
-        uncheckedIsbnResponse.items().forEach(v -> {
-            v.volumeInfo().industryIdentifiers().removeIf(i -> !i.type().startsWith("ISBN_"));
-        });
+        uncheckedIsbnResponse.items().forEach(v ->
+            v.volumeInfo().industryIdentifiers().removeIf(i -> !i.type().startsWith("ISBN_"))
+        );
     }
 
     private VolumesResponse makeApiCalls(String url) {
