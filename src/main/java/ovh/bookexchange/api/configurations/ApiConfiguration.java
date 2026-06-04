@@ -18,8 +18,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import ovh.bookexchange.api.infrastructures.images.ImageStore;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
-import ovh.bookexchange.api.services.EmailService;
 import ovh.bookexchange.api.services.NotificationService;
+import ovh.bookexchange.api.services.ResendMailService;
 
 import javax.sql.DataSource;
 import java.nio.file.Path;
@@ -97,7 +97,6 @@ public class ApiConfiguration {
      */
     @Bean
     JavaMailSender mailSender() {
-        System.out.println("Propriétés chargées : " + Arrays.toString(environment.getActiveProfiles()));
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(environment.getProperty("smtp.host","smtp.sendgrid.net"));
         mailSender.setPort(environment.getProperty("smtp.port",Integer.class,587));
@@ -107,10 +106,10 @@ public class ApiConfiguration {
     }
 
     @Bean
-    EmailService emailService(JavaMailSender mailSender) {
+    ResendMailService emailService() {
         String resetLink = environment.getProperty("reset.link", "http://localhost:5173/reset-password?token=");
         String from = environment.getProperty("mail.from", "bookexchange@gmail.com");
         String subject = environment.getProperty("mail.subject", "Réinitialisation de mot de passe - BookExchange");
-        return new EmailService(mailSender, resetLink, from, subject);
+        return new ResendMailService(environment);
     }
 }

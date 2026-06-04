@@ -40,6 +40,9 @@ dependencies {
 
     // Pour charger les variables d'environnement depuis un fichier .env
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
+    // Pour l'envoie de mails avec Resend
+    implementation 'com.resend:resend-java:+'
 }
 
 tasks.named('test') {
