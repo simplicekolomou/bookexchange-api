@@ -66,6 +66,7 @@ public class EndUser {
 
     @OneToMany(mappedBy = "owner")
     @NotNull
+    @ToString.Exclude
     private List<BookCopy> collection;
 
     @ManyToMany
