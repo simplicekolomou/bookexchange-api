@@ -16,16 +16,16 @@ import ovh.bookexchange.api.controllers.representations.UserRep;
 import ovh.bookexchange.api.controllers.requestsResponses.*;
 import ovh.bookexchange.api.domains.entities.EndUser;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
-import ovh.bookexchange.api.services.EmailService;
 import ovh.bookexchange.api.services.EndUserDetailsService;
 import ovh.bookexchange.api.services.JwtTokenService;
+import ovh.bookexchange.api.services.ResendMailService;
 
 import java.security.Principal;
 
 @RestController
 public class AuthenticationController {
 
-    public AuthenticationController(AuthenticationManager authenticationManager, EndUserDetailsService endUserDetailsService, JwtTokenService jwtTokenService, EndUserRepository endUserRepository, PasswordEncoder passwordEncoder, ModelMapper mapper, EmailService emailService) {
+    public AuthenticationController(AuthenticationManager authenticationManager, EndUserDetailsService endUserDetailsService, JwtTokenService jwtTokenService, EndUserRepository endUserRepository, PasswordEncoder passwordEncoder, ModelMapper mapper, ResendMailService emailService) {
         this.authenticationManager = authenticationManager;
         this.endUserDetailsService = endUserDetailsService;
         this.jwtTokenService = jwtTokenService;
@@ -42,7 +42,7 @@ public class AuthenticationController {
     private final EndUserRepository endUserRepository;
 
     private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService;
+    private final ResendMailService emailService;
 
     private final ModelMapper mapper;
 

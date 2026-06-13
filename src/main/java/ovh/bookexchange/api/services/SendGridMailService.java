@@ -1,20 +1,19 @@
 package ovh.bookexchange.api.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 
-public class EmailService {
+public class SendGridMailService {
     private static final Logger log = LoggerFactory.getLogger(JwtTokenService.class);
     private final MailSender mailSender;
     private final SimpleMailMessage templateMessage;
 
     private final String resetLink;
 
-    public EmailService(MailSender mailSender, String resetLink, String from, String subject) {
+    public SendGridMailService(MailSender mailSender, String resetLink, String from, String subject) {
         this.mailSender = mailSender;
         this.resetLink = resetLink;
         this.templateMessage = templateMessage(from, subject);

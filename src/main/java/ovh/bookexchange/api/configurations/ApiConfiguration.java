@@ -8,9 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -18,8 +15,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import ovh.bookexchange.api.infrastructures.images.ImageStore;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
-import ovh.bookexchange.api.services.EmailService;
 import ovh.bookexchange.api.services.NotificationService;
+import ovh.bookexchange.api.services.ResendMailService;
 
 import javax.sql.DataSource;
 import java.nio.file.Path;
@@ -36,17 +33,17 @@ public class ApiConfiguration {
     @Bean
     public DataSource dataSource() {
         DataSourceBuilder dsBuilder = DataSourceBuilder.create();
-        dsBuilder.url(environment.getProperty("db.url", "jdbc:postgresql://localhost:5432/postgres"));
-        dsBuilder.driverClassName(environment.getProperty("db.driver.class.name","org.postgresql.Driver"));
-        dsBuilder.username(environment.getProperty("db.username", "postgres"));
-        dsBuilder.password(environment.getProperty("db.password", "password"));
+        dsBuilder.url(environment.getProperty("DB_URL"));
+        dsBuilder.driverClassName(environment.getProperty("DB_DRIVER_CLASS_NAME"));
+        dsBuilder.username(environment.getProperty("DB_USERNAME"));
+        dsBuilder.password(environment.getProperty("DB_PASSWORD"));
         return dsBuilder.build();
     }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setGenerateDdl(environment.getProperty("db.ddl.auto", Boolean.class, false));
+        vendorAdapter.setGenerateDdl(environment.getProperty("DB_DDL_AUTO", Boolean.class, false));
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("ovh.bookexchange.api.domains.entities");
@@ -80,9 +77,9 @@ public class ApiConfiguration {
 
     @Bean
     public NotificationService notificationService(EndUserRepository endUserRepository) {
-        String privateKey = environment.getProperty("vapid.private.key");
-        String publicKey = environment.getProperty("vapid.public.key", "BBDyKyvknQuhwMLj-YhZrpUS6M0ZvVcCZYnm0C9R8Ir_ucJT_JPfUboTsKeCvjnrTPJQ-x2XA-dCzjrw0ONldqs");
-        String claim = environment.getProperty("vapid.claim");
+        String privateKey = environment.getProperty("VAPID_PRIVATE_KEY");
+        String publicKey = environment.getProperty("VAPID_PUBLIC_KEY");
+        String claim = environment.getProperty("VAPID_CLAIM");
         return new NotificationService(endUserRepository, publicKey, privateKey, claim);
     }
 
@@ -91,11 +88,11 @@ public class ApiConfiguration {
      * SendGrid SMTP est un service d'envoi d'e-mails transactionnels qui propose une API SMTP
      * On utilise la formule gratuite qui permet d'envoyer jusqu'à 200 e-mails par jour
      * Pour utiliser SendGrid SMTP, il faut créer un compte SendGrid et générer une API Key
-     * La documentation officielle de SendGrid SMTP est disponible ici : https://www.twilio.com/docs/sendgrid/for-developers/sending-email/integrating-with-the-smtp-api
+     * La documentation officielle de SendGrid SMTP est disponible ici : <a href="https://www.twilio.com/docs/sendgrid/for-developers/sending-email/integrating-with-the-smtp-api">...</a>
      * SendGrid nécessite une authentification avec un nom d'utilisateur et un mot de passe (API Key)
      * @return JavaMailSender configuré pour SendGrid SMTP
      */
-    @Bean
+    /*@Bean
     JavaMailSender mailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(environment.getProperty("smtp.host","smtp.sendgrid.net"));
@@ -111,5 +108,10 @@ public class ApiConfiguration {
         String from = environment.getProperty("mail.from", "jsktresor@gmail.com");
         String subject = environment.getProperty("mail.subject", "Réinitialisation de mot de passe - BookExchange");
         return new EmailService(mailSender, resetLink, from, subject);
+    }*/
+
+    @Bean
+    ResendMailService emailService() {
+        return new ResendMailService(environment);
     }
 }

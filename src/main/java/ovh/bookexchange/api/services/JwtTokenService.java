@@ -26,10 +26,10 @@ public class JwtTokenService {
     private final JWTVerifier verifier;
 
     public JwtTokenService(Environment environment) {
-        this.algorithm = Algorithm.HMAC512(Objects.requireNonNull(environment.getProperty("jwt.secret"), "JWT_SECRET must not be null"));
+        this.algorithm = Algorithm.HMAC512(Objects.requireNonNull(environment.getProperty("JWT_SECRET"), "JWT_SECRET must not be null"));
         this.verifier = JWT.require(this.algorithm).build();
-        this.duration = Duration.ofMinutes(Long.parseLong(Objects.requireNonNull(environment.getProperty("jwt.duration"), "JWT_DURATION must not be null")));
-        this.resetDuration = Duration.ofMinutes(environment.getProperty("jwt.reset.duration", Long.class, 15L));
+        this.duration = Duration.ofMinutes(Long.parseLong(Objects.requireNonNull(environment.getProperty("JWT_DURATION"), "JWT_DURATION must not be null")));
+        this.resetDuration = Duration.ofMinutes(environment.getProperty("JWT_RESET_DURATION", Long.class, 15L));
     }
 
     public String generateToken(UserDetails userDetails) {

@@ -18,8 +18,10 @@ public class GroupChat {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @NotBlank
     private String name;
+
+    @NotNull
+    private GroupType groupType;
 
     @OneToMany(mappedBy = "groupChat", cascade = CascadeType.ALL, orphanRemoval = true)
     @NotNull
