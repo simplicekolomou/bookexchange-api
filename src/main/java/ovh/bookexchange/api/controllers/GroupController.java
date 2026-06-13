@@ -39,12 +39,13 @@ public class GroupController {
     }
 
     @PostMapping
-    public void createGroup(@RequestBody @Valid GroupChatRep groupChatRep) {
+    public GroupChatRep createGroup(@RequestBody @Valid GroupChatRep groupChatRep) {
         System.out.println("Creating group with type: " + groupChatRep);
         GroupChat group = mapper.map(groupChatRep, GroupChat.class);
         setMembersAndName(groupChatRep, group);
         group.setMessages(List.of());
         groupRepo.save(group);
+        return mapper.map(group, GroupChatRep.class);
     }
 
     @GetMapping("/user/me")
@@ -81,7 +82,7 @@ public class GroupController {
                     GroupChatRep rep = mapper.map(g, GroupChatRep.class);
                     Message lastMsg = lastMessageByGroupId.get(g.getId());
                     if (lastMsg != null) {
-                        // ✅ conversion avec ModelMapper
+                        // conversion avec ModelMapper
                         MessageRep msgRep = mapper.map(lastMsg, MessageRep.class);
                         rep.setLastMessage(msgRep);
                     } else {
@@ -139,9 +140,8 @@ public class GroupController {
                 new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Logged in user not found"));
     }
 
-    @GetMapping("/oneToOne/{memberId}")
+    /*@GetMapping("/one-to-one/{memberId}")
     public GroupChatRep getGroupByMembers(@PathVariable Long memberId, Principal principal) {
-        EndUser currentUser = findUserOr500(principal);
         EndUser targetUser = userRepo.findById(memberId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Target user not found"));
         List<GroupChat> groups = findUserOr500(principal).getMemberships().stream()
@@ -153,5 +153,5 @@ public class GroupController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "One-to-one group not found");
         }
         return mapper.map(groups.get(0), GroupChatRep.class);
-    }
+    }*/
 }

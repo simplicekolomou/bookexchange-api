@@ -2,7 +2,6 @@ package ovh.bookexchange.api.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,10 +45,13 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/", "/login", "/register", "/reset-password", "/forgot-password").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().hasAuthority(EndUserDetailsService.USER))
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter(endUserDetailsService, jwtTokenService), UsernamePasswordAuthenticationFilter.class)
+                // Désactive la gestion de session et les cookies de Spring Security, on gère ça nous-mêmes avec JWT
+                .logout(AbstractHttpConfigurer::disable)
                 .build();
     }
 
