@@ -60,14 +60,14 @@ public class MessageController {
             @Payload Map<String, String> payload,
             StompHeaderAccessor accessor
     ) {
-        // ✅ lire l'email depuis les session attributes
+        // Lire l'email depuis les session attributes
         Map<String, Object> sessionAttrs = accessor.getSessionAttributes();
 
         if (sessionAttrs == null) {
             throw new IllegalArgumentException("No session attributes found");
         }
 
-        // ✅ clé "email" — cohérent avec ce que l'intercepteur stocke
+        // Clé "email" — cohérent avec ce que l'intercepteur stocke
         String email = (String) sessionAttrs.get("email");
 
         if (email == null) {
@@ -99,27 +99,6 @@ public class MessageController {
 
         sendNotifications(msg);
     }
-
-    /*@PostMapping("/group/{id}")
-    public void sendMessage(@PathVariable long id, @RequestBody @Valid MessageRep message, Principal principal) {
-        EndUser sender = userRepo.findByEmail(principal.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
-        GroupChat groupChat = checkGroupChat(id, sender);
-
-        Message msg = new Message();
-        msg.setContent(message.getContent());
-        msg.setGroupChat(groupChat);
-        msg.setSender(sender);
-        msg.setSendTime(Timestamp.valueOf(LocalDateTime.now()));
-        msg.setRead(List.of());
-        messageRepo.save(msg);
-
-        // Envoi des notifications email (existantes)
-        sendNotifications(msg);
-
-        // Diffusion STOMP en temps réel vers le topic de la conversation
-        messagingTemplate.convertAndSend("/topic/chat/" + groupChat.getId(), mapper.map(msg, MessageRep.class));
-    }*/
 
     private void sendNotifications(Message msg) {
         msg.getGroupChat().getMembers().forEach(membership -> {
