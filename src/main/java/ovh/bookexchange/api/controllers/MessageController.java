@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -14,13 +15,12 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ovh.bookexchange.api.controllers.representations.messages.MessageRep;
+import ovh.bookexchange.api.domains.entities.Chat;
 import ovh.bookexchange.api.domains.entities.EndUser;
-import ovh.bookexchange.api.domains.entities.GroupChat;
 import ovh.bookexchange.api.domains.entities.Message;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
-import ovh.bookexchange.api.infrastructures.repos.GroupChatRepository;
-import ovh.bookexchange.api.infrastructures.repos.MessageRepository;
-import ovh.bookexchange.api.services.NotificationService;
+import ovh.bookexchange.api.infrastructures.repos.ChatRepository;
+import ovh.bookexchange.api.services.MessageService;
 
 import java.security.Principal;
 import java.sql.Timestamp;
@@ -32,52 +32,34 @@ import java.util.Map;
 @RestController
 @RequestMapping("/messages")
 public class MessageController {
-    private final MessageRepository messageRepo;
-    private final GroupChatRepository groupChatRepo;
+    private final MessageService messageService;
+    private final ChatRepository groupChatRepo;
     private final EndUserRepository userRepo;
     private final ModelMapper mapper;
-    private final NotificationService notifService;
     private final SimpMessagingTemplate messagingTemplate; // Ajout pour STOMP
 
-    public MessageController(MessageRepository messageRepo,
-                             GroupChatRepository groupChatRepo,
-                             EndUserRepository userRepo,
-                             NotificationService notifService,
-                             ModelMapper mapper,
-                             SimpMessagingTemplate messagingTemplate) {
-        this.messageRepo = messageRepo;
+    public MessageController(
+                            MessageService messageService,
+                            ChatRepository groupChatRepo,
+                            EndUserRepository userRepo,
+                            ModelMapper mapper,
+                            SimpMessagingTemplate messagingTemplate) {
+        this.messageService = messageService;
         this.groupChatRepo = groupChatRepo;
         this.userRepo = userRepo;
         this.mapper = mapper;
-        this.notifService = notifService;
         this.messagingTemplate = messagingTemplate;
     }
 
     @Transactional
-    @MessageMapping("/chat/{chatId}")
+    @MessageMapping("/chats/{chatId}")
     public void handleChatMessage(
             @DestinationVariable Long chatId,
             @Payload Map<String, String> payload,
             StompHeaderAccessor accessor
     ) {
-        // Lire l'email depuis les session attributes
-        Map<String, Object> sessionAttrs = accessor.getSessionAttributes();
-
-        if (sessionAttrs == null) {
-            throw new IllegalArgumentException("No session attributes found");
-        }
-
-        // Clé "email" — cohérent avec ce que l'intercepteur stocke
-        String email = (String) sessionAttrs.get("email");
-
-        if (email == null) {
-            throw new IllegalArgumentException("User not authenticated");
-        }
-
-        EndUser sender = userRepo.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
-
-        GroupChat groupChat = groupChatRepo.findById(chatId)
+        EndUser sender = getEndUserFromStompHeaderAccessor(accessor);
+        Chat groupChat = groupChatRepo.findById(chatId)
                 .orElseThrow(() -> new IllegalArgumentException("Group not found: " + chatId));
 
         if (!groupChat.isMember(sender)) {
@@ -86,39 +68,90 @@ public class MessageController {
 
         Message msg = new Message();
         msg.setContent(payload.get("content"));
-        msg.setGroupChat(groupChat);
+        msg.setChat(groupChat);
         msg.setSender(sender);
         msg.setSendTime(Timestamp.valueOf(LocalDateTime.now()));
         msg.setRead(List.of());
-        messageRepo.save(msg);
+        messageService.saveMessage(msg);
 
         messagingTemplate.convertAndSend(
-                "/topic/chat/" + chatId,
+                "/topic/messages/chats/" + chatId,
                 mapper.map(msg, MessageRep.class)
         );
 
         sendNotifications(msg);
     }
 
+    private EndUser getEndUserFromStompHeaderAccessor(StompHeaderAccessor accessor) {
+        Map<String, Object> sessionAttrs = accessor.getSessionAttributes();
+        if (sessionAttrs == null) {
+            throw new IllegalArgumentException("No session attributes found");
+        }
+
+        String email = (String) sessionAttrs.get("email");
+        if (email == null) {
+            throw new IllegalArgumentException("User not authenticated");
+        }
+
+        return userRepo.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+    }
+
     private void sendNotifications(Message msg) {
-        msg.getGroupChat().getMembers().forEach(membership -> {
+        msg.getChat().getMembers().forEach(membership -> {
             if (membership.getEndUser().getId() == msg.getSender().getId()) return;
             if (!membership.isNotification()) return;
-            notifService.sendNotification(msg.getSender().getFirstName(), msg.getContent(), membership.getEndUser().getEmail());
+
+            String recipientEmail = membership.getEndUser().getEmail();
+
+            // Notification STOMP personnelle — reçue même hors du chat
+            messagingTemplate.convertAndSendToUser(
+                    recipientEmail,          // ← identifiant de la session STOMP
+                    "/queue/notifications",  // ← topic personnel
+                    Map.of(
+                            "chatId", msg.getChat().getId(),
+                            "chatName", msg.getChat().getName(),
+                            "senderName", msg.getSender().getFirstName(),
+                            "content", msg.getContent(),
+                            "sendTime", msg.getSendTime().toString()
+                    )
+            );
         });
     }
 
-    @GetMapping("/group/{id}")
-    public List<MessageRep> getMessages(@PathVariable long id, @ParameterObject Pageable pageable, Principal principal) {
+    @GetMapping("/chats/{chatId}")
+    public List<MessageRep> getMessages(@PathVariable long chatId, @ParameterObject Pageable pageable, Principal principal) {
         EndUser user = userRepo.findByEmail(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
-        GroupChat groupChat = checkGroupChat(id, user);
-        return messageRepo.findByGroupChatId(groupChat.getId(), pageable).stream()
+        Chat groupChat = checkGroupChat(chatId, user);
+        return messageService.findByGroupChatId(groupChat.getId(), pageable).stream()
                 .map(m -> mapper.map(m, MessageRep.class)).toList();
     }
 
-    private GroupChat checkGroupChat(long id, EndUser user) {
-        GroupChat groupChat = groupChatRepo.findById(id)
+    @PostMapping("/{messageId}/read")
+    public ResponseEntity<Void> markRead(@PathVariable long messageId, Principal principal) {
+        messageService.markAsRead(messageId, principal.getName());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/chats/{chatId}/read")
+    public ResponseEntity<Void> markAllRead(@PathVariable long chatId, Principal principal) {
+        EndUser user = userRepo.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
+        messageService.markAllAsRead(chatId, user);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/chats/{chatId}/unread-count")
+    public ResponseEntity<Long> getUnreadCount(@PathVariable long chatId, Principal principal) {
+        EndUser user = userRepo.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
+       long count = messageService.countUnreadMessages(chatId, user);
+        return ResponseEntity.ok(count);
+    }
+
+    private Chat checkGroupChat(long groupId, EndUser user) {
+        Chat groupChat = groupChatRepo.findById(groupId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         if (!groupChat.isMember(user)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);

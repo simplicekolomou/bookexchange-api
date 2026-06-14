@@ -3,6 +3,7 @@ package ovh.bookexchange.api.controllers.representations.messages;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import ovh.bookexchange.api.controllers.representations.UserRep;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -17,8 +18,8 @@ public class MessageRep {
 
     private Timestamp sendTime;
 
-    private long groupChatId;
+    private long chatId;
 
     private long senderId;
-    private List<Long> read;
+    private List<UserRep> readers;
 }

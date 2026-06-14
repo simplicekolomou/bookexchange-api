@@ -22,5 +22,5 @@ public class Membership {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private GroupChat groupChat;
+    private Chat chat;
 }

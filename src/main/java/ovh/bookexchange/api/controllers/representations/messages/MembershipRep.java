@@ -13,5 +13,5 @@ public class MembershipRep {
     @Positive
     @NotNull
     private long endUserId;
-    private long groupChatId;
+    private long chatId;
 }

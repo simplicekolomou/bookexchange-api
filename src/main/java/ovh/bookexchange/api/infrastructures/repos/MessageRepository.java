@@ -9,7 +9,7 @@ import ovh.bookexchange.api.domains.entities.Message;
 import java.util.List;
 
 public interface MessageRepository extends ListPagingAndSortingRepository<Message, Long>, CrudRepository<Message, Long> {
-    List<Message> findByGroupChatId(long id, Pageable pageable);
-    @EntityGraph(attributePaths = {"groupChat", "sender"})
-    List<Message> findByGroupChatIdIn(List<Long> groupIds);
+    List<Message> findByChatId(long id, Pageable pageable);
+    @EntityGraph(attributePaths = {"chat", "sender"})
+    List<Message> findByChatIdIn(List<Long> groupIds);
 }

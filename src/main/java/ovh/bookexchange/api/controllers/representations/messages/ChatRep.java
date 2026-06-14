@@ -5,19 +5,19 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ovh.bookexchange.api.domains.entities.GroupType;
+import ovh.bookexchange.api.domains.entities.ChatType;
 
 import java.util.List;
 
 @Setter
 @Getter
 @ToString
-public class GroupChatRep {
+public class ChatRep {
     private long id;
 
     private String name;
 
-    private GroupType groupType;
+    private ChatType chatType;
     private MessageRep lastMessage;
 
     @Valid

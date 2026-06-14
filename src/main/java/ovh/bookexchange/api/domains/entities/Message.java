@@ -27,7 +27,7 @@ public class Message {
 
     @ManyToOne
     @NotNull
-    private GroupChat groupChat;
+    private Chat chat;
 
     @ManyToOne
     @NotNull

@@ -1,7 +1,6 @@
 package ovh.bookexchange.api.domains.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class GroupChat {
+public class Chat {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,13 +20,13 @@ public class GroupChat {
     private String name;
 
     @NotNull
-    private GroupType groupType;
+    private ChatType chatType;
 
-    @OneToMany(mappedBy = "groupChat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     @NotNull
     List<Membership> members;
 
-    @OneToMany(mappedBy = "groupChat", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     @NotNull
     List<Message> messages;
 

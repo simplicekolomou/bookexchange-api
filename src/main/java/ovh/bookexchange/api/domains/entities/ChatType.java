@@ -1,6 +1,6 @@
 package ovh.bookexchange.api.domains.entities;
 
-public enum GroupType {
+public enum ChatType {
     DIRECT,
     GROUP
 }
