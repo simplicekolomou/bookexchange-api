@@ -30,11 +30,15 @@ public class ApiConfiguration {
 
     @Bean
     public DataSource dataSource() {
+        String host = environment.getProperty("PGHOST");
+        String port = environment.getProperty("PGPORT", "5432");
+        String db   = environment.getProperty("PGDATABASE");
+        String url  = "jdbc:postgresql://" + host + ":" + port + "/" + db;
         DataSourceBuilder dsBuilder = DataSourceBuilder.create();
-        dsBuilder.url(environment.getProperty("SPRING_DATASOURCE_URL"));
+        dsBuilder.url(url);
         dsBuilder.driverClassName("org.postgresql.Driver");
-        dsBuilder.username(environment.getProperty("SPRING_DATASOURCE_USERNAME"));
-        dsBuilder.password(environment.getProperty("SPRING_DATASOURCE_PASSWORD"));
+        dsBuilder.username(environment.getProperty("PGUSER"));
+        dsBuilder.password(environment.getProperty("PGPASSWORD"));
         return dsBuilder.build();
     }
 
