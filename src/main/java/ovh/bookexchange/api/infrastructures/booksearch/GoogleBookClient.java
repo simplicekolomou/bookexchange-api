@@ -59,9 +59,13 @@ public class GoogleBookClient implements BookClientInterface {
     }
 
     private void removeNonIsbnIdentifiers(VolumesResponse uncheckedIsbnResponse) {
-        uncheckedIsbnResponse.items().forEach(v ->
-            v.volumeInfo().industryIdentifiers().removeIf(i -> !i.type().startsWith("ISBN_"))
-        );
+        if (uncheckedIsbnResponse.items() == null) return;
+        uncheckedIsbnResponse.items().forEach(volume -> {
+            if (volume.volumeInfo().industryIdentifiers() != null) {
+                volume.volumeInfo().industryIdentifiers()
+                        .removeIf(identifier -> !identifier.type().startsWith("ISBN_"));
+            }
+        });
     }
 
     private VolumesResponse makeApiCalls(String url) {

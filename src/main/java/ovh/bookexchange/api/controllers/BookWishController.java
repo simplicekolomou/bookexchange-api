@@ -51,7 +51,6 @@ public class BookWishController {
                         userId, pageable
                 );
 
-        log.info("Getting available copies of userId {}", userId);
         log.info("Copies: {}", bookWishCopies);
         return bookWishCopies.stream()
                 .map(bookCopy -> mapper.map(bookCopy, BookWishRep.class))
