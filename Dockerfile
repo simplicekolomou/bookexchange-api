@@ -25,13 +25,6 @@ RUN true
 COPY --from=builder /builder/extracted/application/ ./
 RUN true
 
-#Copy script for push notifications and install python.
-COPY --from=builder /builder/python_src/ ./
-RUN apt update
-RUN apt install python3 python3.11-venv -y
-RUN python3 -m venv venv
-RUN ./venv/bin/pip3 install -r ./requirements.txt
-
 # Start the application jar - this is not the uber jar used by the builder
 # This jar only contains application code and references to the extracted jar files
 # This layout is efficient to start up and CDS/AOT cache friendly
