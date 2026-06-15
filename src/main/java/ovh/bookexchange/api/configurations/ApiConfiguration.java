@@ -31,10 +31,10 @@ public class ApiConfiguration {
     @Bean
     public DataSource dataSource() {
         DataSourceBuilder dsBuilder = DataSourceBuilder.create();
-        dsBuilder.url(environment.getProperty("DB_URL"));
-        dsBuilder.driverClassName(environment.getProperty("DB_DRIVER_CLASS_NAME"));
-        dsBuilder.username(environment.getProperty("DB_USERNAME"));
-        dsBuilder.password(environment.getProperty("DB_PASSWORD"));
+        dsBuilder.url(environment.getProperty("DATABASE_URL"));
+        dsBuilder.driverClassName(environment.getProperty("org.postgresql.Driver"));
+        dsBuilder.username(environment.getProperty("PGUSER"));
+        dsBuilder.password(environment.getProperty("PGPASSWORD"));
         return dsBuilder.build();
     }
 
