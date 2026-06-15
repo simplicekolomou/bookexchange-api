@@ -17,9 +17,11 @@ import org.springframework.web.server.ResponseStatusException;
 import ovh.bookexchange.api.controllers.representations.messages.MessageRep;
 import ovh.bookexchange.api.domains.entities.Chat;
 import ovh.bookexchange.api.domains.entities.EndUser;
+import ovh.bookexchange.api.domains.entities.Membership;
 import ovh.bookexchange.api.domains.entities.Message;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
 import ovh.bookexchange.api.infrastructures.repos.ChatRepository;
+import ovh.bookexchange.api.services.FirebaseService;
 import ovh.bookexchange.api.services.MessageService;
 
 import java.security.Principal;
@@ -37,18 +39,21 @@ public class MessageController {
     private final EndUserRepository userRepo;
     private final ModelMapper mapper;
     private final SimpMessagingTemplate messagingTemplate; // Ajout pour STOMP
+    private final FirebaseService firebaseService; // Ajout pour FCM
 
     public MessageController(
                             MessageService messageService,
                             ChatRepository groupChatRepo,
                             EndUserRepository userRepo,
                             ModelMapper mapper,
-                            SimpMessagingTemplate messagingTemplate) {
+                            SimpMessagingTemplate messagingTemplate,
+                            FirebaseService firebaseService) {
         this.messageService = messageService;
         this.groupChatRepo = groupChatRepo;
         this.userRepo = userRepo;
         this.mapper = mapper;
         this.messagingTemplate = messagingTemplate;
+        this.firebaseService = firebaseService;
     }
 
     @Transactional
@@ -97,26 +102,29 @@ public class MessageController {
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
     }
 
-    private void sendNotifications(Message msg) {
-        msg.getChat().getMembers().forEach(membership -> {
-            if (membership.getEndUser().getId() == msg.getSender().getId()) return;
-            if (!membership.isNotification()) return;
-
-            String recipientEmail = membership.getEndUser().getEmail();
-
-            // Notification STOMP personnelle — reçue même hors du chat
-            messagingTemplate.convertAndSendToUser(
-                    recipientEmail,          // ← identifiant de la session STOMP
-                    "/queue/notifications",  // ← topic personnel
-                    Map.of(
-                            "chatId", msg.getChat().getId(),
-                            "chatName", msg.getChat().getName(),
-                            "senderName", msg.getSender().getFirstName(),
-                            "content", msg.getContent(),
-                            "sendTime", msg.getSendTime().toString()
-                    )
-            );
-        });
+    private void sendNotifications(Message message) {
+        // Pour chaque membre du chat différent de l'expéditeur, tenter d'envoyer une notification push
+        for (Membership member : message.getChat().getMembers()) {
+            EndUser memberUser = member.getEndUser();
+            if (memberUser.getId() != message.getSender().getId() && memberUser.getFcmToken() != null) {
+                try {
+                    firebaseService.sendNotificationToToken(
+                            memberUser.getFcmToken(),
+                            "Nouveau message de " + message.getSender().getFirstName(),
+                            message.getContent().length() > 100 ?
+                                    message.getContent().substring(0, 100) + "..." :
+                                    message.getContent()
+                    );
+                } catch (Exception e) {
+                    System.err.println("Impossible d'envoyer la notification push à l'utilisateur " + memberUser.getId() + " : " + e.getMessage());
+                    // Option : supprimer le token s'il est invalide
+                    if (e.getMessage().contains("404") || e.getMessage().contains("Invalid registration token")) {
+                        memberUser.setFcmToken(null);
+                        firebaseService.saveFcmToken(memberUser.getEmail(), memberUser.getFcmToken());
+                    }
+                }
+            }
+        }
     }
 
     @GetMapping("/chats/{chatId}")

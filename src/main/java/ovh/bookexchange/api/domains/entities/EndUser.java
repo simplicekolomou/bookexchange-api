@@ -76,6 +76,8 @@ public class EndUser {
     @ManyToMany
     @NotNull
     private List<EndUser> friends;
+    @Column(length = 512)
+    private String fcmToken;  // Stocke le token firebase cloud messaging pour ce user
 
     public EndUser() {}
 

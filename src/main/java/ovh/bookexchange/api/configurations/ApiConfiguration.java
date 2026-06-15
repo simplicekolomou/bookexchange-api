@@ -14,8 +14,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import ovh.bookexchange.api.infrastructures.images.ImageStore;
-import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
-import ovh.bookexchange.api.services.NotificationService;
 import ovh.bookexchange.api.services.ResendMailService;
 
 import javax.sql.DataSource;
@@ -73,14 +71,6 @@ public class ApiConfiguration {
                 imagePath,
                 Arrays.stream(environment.getProperty("profile.picture.image.formats", String.class, "jpeg;png").split(";")).toList()
         );
-    }
-
-    @Bean
-    public NotificationService notificationService(EndUserRepository endUserRepository) {
-        String privateKey = environment.getProperty("VAPID_PRIVATE_KEY");
-        String publicKey = environment.getProperty("VAPID_PUBLIC_KEY");
-        String claim = environment.getProperty("VAPID_CLAIM");
-        return new NotificationService(endUserRepository, publicKey, privateKey, claim);
     }
 
     /**

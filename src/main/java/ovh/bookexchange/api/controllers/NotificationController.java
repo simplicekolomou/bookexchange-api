@@ -1,44 +1,32 @@
 package ovh.bookexchange.api.controllers;
 
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import ovh.bookexchange.api.domains.entities.notifications.NotifSub;
-import ovh.bookexchange.api.services.NotificationService;
+import ovh.bookexchange.api.services.FirebaseService;
 
 import java.security.Principal;
+import java.util.Map;
 
 @RestController()
 @RequestMapping("/notifications")
 @Slf4j
 public class NotificationController {
+    private final FirebaseService firebaseService;
 
-    public NotificationController(NotificationService notificationService) {
-        this.notificationService = notificationService;
+    public NotificationController(FirebaseService firebaseService) {
+        this.firebaseService = firebaseService;
     }
 
-    private final NotificationService notificationService;
-
-    @PutMapping()
-    public void storeNotification(@RequestBody @Valid NotifSub notification, Principal principal) {
-        try {
-            notificationService.subscribeUser(principal.getName(), notification);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found");
+    @PostMapping("/register-token")
+    public ResponseEntity<?> registerFcmToken(Principal principal, @RequestBody Map<String, String> payload) {
+        String fcmToken = payload.get("token");
+        System.out.println("Enregistrement du token FCM pour l'utilisateur " + principal.getName() + ": " + fcmToken);
+        if (fcmToken == null || fcmToken.isEmpty()) {
+            return ResponseEntity.badRequest().body("Token manquant");
         }
+        String email = principal.getName();
+        firebaseService.saveFcmToken(email, fcmToken);
+        return ResponseEntity.ok().build();
     }
-
-/*
-    route qui test un evoi de notification à l'utilisateur qui appel la route.
-    @GetMapping void notificationTest(Principal principal) {
-        try {
-            notificationService.sendNotification("un titre", "le jolly corp de la notification", principal.getName());
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }*/
-
-
 }
