@@ -30,15 +30,27 @@ public class ApiConfiguration {
 
     @Bean
     public DataSource dataSource() {
-        String host = environment.getProperty("PGHOST");
-        String port = environment.getProperty("PGPORT", "5432");
-        String db   = environment.getProperty("PGDATABASE");
-        String url  = "jdbc:postgresql://" + host + ":" + port + "/" + db;
-        DataSourceBuilder dsBuilder = DataSourceBuilder.create();
+        // Lire depuis System.getenv() directement pour déboguer
+        String host = System.getenv("PGHOST");
+        String port = System.getenv("PGPORT");
+        String db   = System.getenv("PGDATABASE");
+        String user = System.getenv("PGUSER");
+        String pass = System.getenv("PGPASSWORD");
+
+        // Log pour voir ce qu'on reçoit
+        System.out.println("=== DB CONFIG ===");
+        System.out.println("PGHOST: " + host);
+        System.out.println("PGPORT: " + port);
+        System.out.println("PGDATABASE: " + db);
+        System.out.println("PGUSER: " + user);
+        System.out.println("=================");
+
+        String url = "jdbc:postgresql://" + host + ":" + port + "/" + db;
+        DataSourceBuilder<?> dsBuilder = DataSourceBuilder.create();
         dsBuilder.url(url);
         dsBuilder.driverClassName("org.postgresql.Driver");
-        dsBuilder.username(environment.getProperty("PGUSER"));
-        dsBuilder.password(environment.getProperty("PGPASSWORD"));
+        dsBuilder.username(user);
+        dsBuilder.password(pass);
         return dsBuilder.build();
     }
 
