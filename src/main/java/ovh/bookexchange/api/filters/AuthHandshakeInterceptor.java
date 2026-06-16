@@ -4,6 +4,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -66,60 +67,55 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
             Map<String, Object> attributes
     ) {
         // On ne bloque jamais la handshake, on laisse passer même sans cookie
-        // L'authentification se fait en lisant le cookie et en stockant l'email + Principal dans les attributes
-        // Cette ligne permet de s'assurer que la requête est bien une requête HTTP servlet, ce qui est nécessaire pour accéder aux cookies
+        // L'authentification se fait en lisant le header Authorization et en stockant l'email + Principal dans les attributes
+        // Cette ligne permet de s'assurer que la requête est bien une requête HTTP servlet, ce qui est nécessaire pour accéder aux en-têtes
         if (!(request instanceof ServletServerHttpRequest servletRequest)) return true;
 
-        Cookie[] cookies = servletRequest.getServletRequest().getCookies();
+        // Récupérer l'en-tête Authorization
+        String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        log.info("WebSocket handshake Authorization header: {}", authHeader != null ? "présent" : "absent");
 
-        log.info("WebSocket handshake cookies: {}",
-                cookies != null ? Arrays.stream(cookies).map(Cookie::getName).toList() : "null"
-        );
+        // Si le header Authorization est présent et commence par "Bearer ", on extrait le token
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // Enlever "Bearer "
+            try {
+                // Même logique que JwtRequestFilter
+                DecodedJWT decodedJWT = jwtTokenService.validateToken(token);
 
-        // Si pas de cookies du tout, on laisse passer (pas d'auth)
-        if (cookies == null) return true;
+                if (decodedJWT == null
+                        || decodedJWT.getSubject() == null
+                        || decodedJWT.getExpiresAtAsInstant().isBefore(Instant.now())
+                ) {
+                    log.warn("WebSocket token invalide ou expiré");
+                    return true; // On ne bloque pas, on laisse passer sans authentifier
+                }
 
-        // On cherche le cookie "auth_token" et on valide le token s'il est présent
-        Arrays.stream(cookies)
-                .filter(c -> "auth_token".equals(c.getName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .ifPresent(token -> {
-                    try {
-                        // Même logique que JwtRequestFilter
-                        DecodedJWT decodedJWT = jwtTokenService.validateToken(token);
+                // Si le token est valide, on récupère l'email et on charge les détails de l'utilisateur
+                String email = decodedJWT.getSubject();
 
-                        if (decodedJWT == null
-                                || decodedJWT.getSubject() == null
-                                || decodedJWT.getExpiresAtAsInstant().isBefore(Instant.now())
-                        ) {
-                            log.warn("WebSocket token invalide ou expiré");
-                            return;
-                        }
+                UserDetails userDetails = endUserDetailsService.loadUserByUsername(email);
 
-                        // Si le token est valide, on récupère l'email et on charge les détails de l'utilisateur
-                        String email = decodedJWT.getSubject();
+                // Créer un objet d'authentification Spring Security (Principal) à partir des détails de l'utilisateur
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
 
-                        UserDetails userDetails = endUserDetailsService.loadUserByUsername(email);
+                // Stocker email ET Principal dans les session attributes
+                attributes.put("email", email);
+                attributes.put("user", auth);
 
-                        // Créer un objet d'authentification Spring Security (Principal) à partir des détails de l'utilisateur
-                        UsernamePasswordAuthenticationToken auth =
-                                new UsernamePasswordAuthenticationToken(
-                                        userDetails,
-                                        null,
-                                        userDetails.getAuthorities()
-                                );
+                log.info("WebSocket authentifié : {}", email);
 
-                        // Stocker email ET Principal dans les session attributes
-                        attributes.put("email", email);
-                        attributes.put("user", auth);
-
-                        log.info("WebSocket authentifié : {}", email);
-
-                    } catch (Exception e) {
-                        log.warn("WebSocket auth échouée : {}", e.getMessage());
-                    }
-                });
+            } catch (Exception e) {
+                log.warn("WebSocket auth échouée : {}", e.getMessage());
+                // On ne bloque pas, on laisse passer sans authentifier
+            }
+        } else {
+            log.info("WebSocket handshake sans token d'authentification");
+        }
 
         return true; // Toujours true — on laisse passer, l'auth est dans les attributs
     }
