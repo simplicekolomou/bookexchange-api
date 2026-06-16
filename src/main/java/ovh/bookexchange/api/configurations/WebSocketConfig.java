@@ -34,11 +34,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Enregistrer le point de terminaison WebSocket avec l'intercepteur d'authentification
-        registry.addEndpoint("/wss")
+        registry.addEndpoint("/ws")
                 // Permettre les connexions depuis le client (ex: http://localhost:5173) et ajouter l'intercepteur d'authentification
                 .addInterceptors(authHandshakeInterceptor)
                 // Permettre les connexions CORS depuis le client (ex: http://localhost:5173)
-                .setAllowedOrigins("http://localhost:5173", "https://bookexchange-front.vercel.app");
+                .setAllowedOrigins("http://localhost:5173", "https://bookexchange-front.vercel.app")
+                .withSockJS();;
     }
 
     @Override
