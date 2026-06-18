@@ -27,11 +27,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(authService.login(request, response));
     }
 
-    @GetMapping("/access-token")
-    public String getAccessToken(HttpServletRequest httpServletRequest) {
-        return authService.getAccessToken(httpServletRequest);
-    }
-
     @PostMapping("/register")
     public ResponseEntity<UserRep> register(@Valid @RequestBody RegisterRequest request, HttpServletResponse response) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request, response));

@@ -161,24 +161,4 @@ public class AuthService {
         System.out.println("Le token WS pour " + user.getEmail() + " est : " + token);
         return token;
     }
-
-    public String getAccessToken(HttpServletRequest request) {
-        String token = null;
-
-        // Récupérer les cookies depuis la requête
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("auth_token".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
-        if (token == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token not found in cookies");
-        }
-
-        return token;
-    }
 }
