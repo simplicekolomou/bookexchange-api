@@ -1,5 +1,6 @@
 package ovh.bookexchange.api.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,11 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<UserRep> login(@Valid @RequestBody AuthRequest request, HttpServletResponse response) {
         return ResponseEntity.ok(authService.login(request, response));
+    }
+
+    @GetMapping("/access-token")
+    public String getAccessToken(HttpServletRequest httpServletRequest) {
+        return authService.getAccessToken(httpServletRequest);
     }
 
     @PostMapping("/register")
