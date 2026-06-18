@@ -88,15 +88,19 @@ public class MessageController {
     }
 
     private EndUser getEndUserFromStompHeaderAccessor(StompHeaderAccessor accessor) {
-        Map<String, Object> sessionAttrs = accessor.getSessionAttributes();
-        if (sessionAttrs == null) {
-            throw new IllegalArgumentException("No session attributes found");
-        }
+        // accessor.getUser() retourne le Principal injecté par setUser()
+        // dans ton StompAuthChannelInterceptor au moment du CONNECT STOMP.
+        // C'est la nouvelle source d'authentification, qui remplace les session attributes.
+        Principal principal = accessor.getUser();
 
-        String email = (String) sessionAttrs.get("email");
-        if (email == null) {
+        if (principal == null) {
             throw new IllegalArgumentException("User not authenticated");
         }
+
+        // principal.getName() retourne le username de l'objet UserDetails
+        // passé au constructeur de UsernamePasswordAuthenticationToken.
+        // Dans ton cas c'est l'email, puisque tu utilises loadUserByUsername(email).
+        String email = principal.getName();
 
         return userRepo.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
