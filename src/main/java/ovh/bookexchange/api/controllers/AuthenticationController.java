@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ovh.bookexchange.api.controllers.representations.UserRep;
 import ovh.bookexchange.api.controllers.requestsResponses.*;
@@ -28,6 +29,11 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<UserRep> register(@Valid @RequestBody RegisterRequest request, HttpServletResponse response) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request, response));
+    }
+
+    @GetMapping("/ws-token")
+    public String getWebSocketToken(Authentication authentication) {
+        return authService.getWsToken(authentication);
     }
 
     @PostMapping("/logout")

@@ -4,6 +4,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -69,59 +70,75 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
         // L'authentification se fait en lisant le cookie et en stockant l'email + Principal dans les attributes
         // Cette ligne permet de s'assurer que la requête est bien une requête HTTP servlet, ce qui est nécessaire pour accéder aux cookies
         if (!(request instanceof ServletServerHttpRequest servletRequest)) return true;
-        log.info("WebSocket handshake servletRequest: {}",
-                servletRequest != null ? servletRequest.getServletRequest().getRequestURI() : "null"
-        );
-        Cookie[] cookies = servletRequest.getServletRequest().getCookies();
 
-        log.info("WebSocket handshake cookies: {}",
-                cookies != null ? Arrays.stream(cookies).map(Cookie::getName).toList() : "null"
-        );
+        // 1. Essayer de récupérer le token depuis l'en-tête Authorization (token éphémère pour WebSocket)
+        String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String token = null;
 
-        // Si pas de cookies du tout, on laisse passer (pas d'auth)
-        if (cookies == null) return true;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+            log.info("WebSocket handshake avec token dans Authorization");
+        } else {
+            // 2. Fallback : lire le cookie HttpOnly (token principal)
+            Cookie[] cookies = servletRequest.getServletRequest().getCookies();
+            log.info("WebSocket handshake cookies: {}",
+                    cookies != null ? Arrays.stream(cookies).map(Cookie::getName).toList() : "null"
+            );
 
-        // On cherche le cookie "auth_token" et on valide le token s'il est présent
-        Arrays.stream(cookies)
-                .filter(c -> "auth_token".equals(c.getName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .ifPresent(token -> {
-                    try {
-                        // Même logique que JwtRequestFilter
-                        DecodedJWT decodedJWT = jwtTokenService.validateToken(token);
+            if (cookies != null) {
+                token = Arrays.stream(cookies)
+                        .filter(c -> "auth_token".equals(c.getName()))
+                        .map(Cookie::getValue)
+                        .findFirst()
+                        .orElse(null);
+                if (token != null) {
+                    log.info("WebSocket handshake avec cookie auth_token");
+                }
+            }
+        }
 
-                        if (decodedJWT == null
-                                || decodedJWT.getSubject() == null
-                                || decodedJWT.getExpiresAtAsInstant().isBefore(Instant.now())
-                        ) {
-                            log.warn("WebSocket token invalide ou expiré");
-                            return;
-                        }
+        // Si aucun token trouvé, on laisse passer (pas d'auth)
+        if (token == null) {
+            log.info("WebSocket handshake sans token d'authentification");
+            return true;
+        }
 
-                        // Si le token est valide, on récupère l'email et on charge les détails de l'utilisateur
-                        String email = decodedJWT.getSubject();
+        // Valider le token (qu'il vienne du header ou du cookie)
+        try {
+            // Même logique que JwtRequestFilter
+            DecodedJWT decodedJWT = jwtTokenService.validateToken(token);
 
-                        UserDetails userDetails = endUserDetailsService.loadUserByUsername(email);
+            if (decodedJWT == null
+                    || decodedJWT.getSubject() == null
+                    || decodedJWT.getExpiresAtAsInstant().isBefore(Instant.now())
+            ) {
+                log.warn("WebSocket token invalide ou expiré");
+                return true; // On ne bloque pas, on laisse passer sans authentifier
+            }
 
-                        // Créer un objet d'authentification Spring Security (Principal) à partir des détails de l'utilisateur
-                        UsernamePasswordAuthenticationToken auth =
-                                new UsernamePasswordAuthenticationToken(
-                                        userDetails,
-                                        null,
-                                        userDetails.getAuthorities()
-                                );
+            // Si le token est valide, on récupère l'email et on charge les détails de l'utilisateur
+            String email = decodedJWT.getSubject();
 
-                        // Stocker email ET Principal dans les session attributes
-                        attributes.put("email", email);
-                        attributes.put("user", auth);
+            UserDetails userDetails = endUserDetailsService.loadUserByUsername(email);
 
-                        log.info("WebSocket authentifié : {}", email);
+            // Créer un objet d'authentification Spring Security (Principal) à partir des détails de l'utilisateur
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
 
-                    } catch (Exception e) {
-                        log.warn("WebSocket auth échouée : {}", e.getMessage());
-                    }
-                });
+            // Stocker email ET Principal dans les session attributes
+            attributes.put("email", email);
+            attributes.put("user", auth);
+
+            log.info("WebSocket authentifié : {}", email);
+
+        } catch (Exception e) {
+            log.warn("WebSocket auth échouée : {}", e.getMessage());
+            // On ne bloque pas, on laisse passer sans authentifier
+        }
 
         return true; // Toujours true — on laisse passer, l'auth est dans les attributs
     }

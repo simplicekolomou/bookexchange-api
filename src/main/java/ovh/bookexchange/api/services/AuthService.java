@@ -10,10 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ovh.bookexchange.api.controllers.representations.TokenType;
 import ovh.bookexchange.api.controllers.representations.UserRep;
 import ovh.bookexchange.api.controllers.requestsResponses.*;
 import ovh.bookexchange.api.domains.entities.EndUser;
@@ -78,7 +80,7 @@ public class AuthService {
 
         try {
             UserDetails userDetails = endUserDetailsService.loadUserByUsername(endUser.getEmail());
-            String token = jwtTokenService.generateToken(userDetails, true);
+            String token = jwtTokenService.generateToken(userDetails, TokenType.RESET_PASSWORD_TOKEN);
             emailService.sendResetPasswordMail(endUser.getEmail(), token);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error generating reset token");
@@ -137,7 +139,7 @@ public class AuthService {
     // génère et pose le cookie httpOnly
     private void issueAuthCookie(EndUser user, HttpServletResponse response) {
         UserDetails userDetails = endUserDetailsService.loadUserByUsername(user.getEmail());
-        String token = jwtTokenService.generateToken(userDetails);
+        String token = jwtTokenService.generateToken(userDetails, TokenType.AUTH_TOKEN);
         response.addHeader(HttpHeaders.SET_COOKIE, cookieService.createAuthCookie(token).toString());
     }
 
@@ -149,5 +151,14 @@ public class AuthService {
     private EndUser findUserByEmail(String email) {
         return endUserRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
+    }
+
+    public String getWsToken(Authentication authentication) {
+        EndUser user = (EndUser) authentication.getPrincipal();
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+        UserDetails userDetails = endUserDetailsService.loadUserByUsername(user.getEmail());
+        return jwtTokenService.generateToken(userDetails, TokenType.WS_TOKEN);
     }
 }
