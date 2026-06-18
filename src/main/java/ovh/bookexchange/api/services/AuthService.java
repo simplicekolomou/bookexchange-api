@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -156,6 +155,8 @@ public class AuthService {
     public String getWsToken(Principal principal) {
         EndUser user = findUserOr500(principal);
         UserDetails userDetails = endUserDetailsService.loadUserByUsername(user.getEmail());
-        return jwtTokenService.generateToken(userDetails, TokenType.WS_TOKEN);
+        String token = jwtTokenService.generateToken(userDetails, TokenType.WS_TOKEN);
+        System.out.println("Le token WS pour " + user.getEmail() + " est : " + token);
+        return token;
     }
 }
