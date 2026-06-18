@@ -69,7 +69,9 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
         // L'authentification se fait en lisant le cookie et en stockant l'email + Principal dans les attributes
         // Cette ligne permet de s'assurer que la requête est bien une requête HTTP servlet, ce qui est nécessaire pour accéder aux cookies
         if (!(request instanceof ServletServerHttpRequest servletRequest)) return true;
-
+        log.info("WebSocket handshake servletRequest: {}",
+                servletRequest != null ? servletRequest.getServletRequest().getRequestURI() : "null"
+        );
         Cookie[] cookies = servletRequest.getServletRequest().getCookies();
 
         log.info("WebSocket handshake cookies: {}",
