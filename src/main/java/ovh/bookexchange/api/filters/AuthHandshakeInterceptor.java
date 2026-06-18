@@ -73,6 +73,8 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
 
         // 1. Essayer de récupérer le token depuis l'en-tête Authorization (token éphémère pour WebSocket)
         String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+
+        log.info("WebSocket handshake Authorization header: {}", authHeader);
         String token = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
