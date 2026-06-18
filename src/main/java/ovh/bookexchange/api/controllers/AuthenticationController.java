@@ -12,6 +12,7 @@ import ovh.bookexchange.api.controllers.requestsResponses.*;
 import ovh.bookexchange.api.services.AuthService;
 
 import java.security.Principal;
+import java.util.Map;
 
 @RestController
 public class AuthenticationController {
@@ -33,8 +34,8 @@ public class AuthenticationController {
     }
 
     @GetMapping("/ws-token")
-    public String getWebSocketToken(Principal principal) {
-        return authService.getWsToken(principal);
+    public ResponseEntity<Map<String, String>> getWebSocketToken(Principal principal) {
+        return ResponseEntity.ok(Map.of("wsToken", authService.getWsToken(principal)));
     }
 
     @PostMapping("/logout")
