@@ -32,8 +32,8 @@ public class AuthenticationController {
     }
 
     @GetMapping("/ws-token")
-    public String getWebSocketToken(Authentication authentication) {
-        return authService.getWsToken(authentication);
+    public String getWebSocketToken(Principal principal) {
+        return authService.getWsToken(principal);
     }
 
     @PostMapping("/logout")

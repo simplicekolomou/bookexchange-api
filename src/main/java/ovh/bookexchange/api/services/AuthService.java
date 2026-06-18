@@ -153,11 +153,8 @@ public class AuthService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
     }
 
-    public String getWsToken(Authentication authentication) {
-        EndUser user = (EndUser) authentication.getPrincipal();
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-        }
+    public String getWsToken(Principal principal) {
+        EndUser user = findUserOr500(principal);
         UserDetails userDetails = endUserDetailsService.loadUserByUsername(user.getEmail());
         return jwtTokenService.generateToken(userDetails, TokenType.WS_TOKEN);
     }
