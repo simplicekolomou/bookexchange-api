@@ -26,7 +26,7 @@ public class CookieService {
                 .sameSite(sameSite)
                 .maxAge(Duration.ofDays(maxAgeDays))
                 .path("/")
-                .build();
+                .build(); 
     }
 
     // Cookie vide pour le logout

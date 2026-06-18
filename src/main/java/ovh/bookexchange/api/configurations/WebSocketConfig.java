@@ -39,7 +39,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .addInterceptors(authHandshakeInterceptor)
                 // Permettre les connexions CORS depuis le client (ex: http://localhost:5173)
                 .setAllowedOrigins("http://localhost:5173", "https://bookexchange-front.vercel.app")
-                .withSockJS();;
+                .withSockJS();
     }
 
     @Override
