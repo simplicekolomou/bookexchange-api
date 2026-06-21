@@ -76,7 +76,9 @@ public class ApiConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        boolean isProduction = "prod".equals(environment.getProperty("spring.profiles.active", "dev"));
+        boolean isProduction = "prod".equals(environment.getProperty("PROFILES_ACTIVE", "dev"));
+
+        log.info("Le profil actif est : {}", isProduction ? "production" : "développement");
 
         if (isProduction) {
             String frontendUrl = environment.getProperty("FRONTEND_URL", "");
