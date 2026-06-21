@@ -2,6 +2,8 @@ package ovh.bookexchange.api.configurations;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import ovh.bookexchange.api.infrastructures.images.ImageStore;
+import ovh.bookexchange.api.services.JwtTokenService;
 import ovh.bookexchange.api.services.ResendMailService;
 
 import javax.sql.DataSource;
@@ -29,17 +32,18 @@ import java.util.List;
 @EnableJpaRepositories(basePackages = "ovh.bookexchange.api.infrastructures.repos")
 @EnableTransactionManagement
 public class ApiConfiguration {
+    private static final Logger log = LoggerFactory.getLogger(JwtTokenService.class);
     @Autowired
     private Environment environment;
 
     @Bean
-    public DataSource dataSource() {
+    public DataSource dataSource(Environment environment) {
         // Lire depuis System.getenv() directement pour déboguer
-        String host = System.getenv("PGHOST");
-        String port = System.getenv("PGPORT");
-        String db   = System.getenv("PGDATABASE");
-        String user = System.getenv("PGUSER");
-        String pass = System.getenv("PGPASSWORD");
+        String host = environment.getProperty("PGHOST");
+        String port = environment.getProperty("PGPORT");
+        String db   = environment.getProperty("PGDATABASE");
+        String user = environment.getProperty("PGUSER");
+        String pass = environment.getProperty("PGPASSWORD");
 
         // Log pour voir ce qu'on reçoit
         System.out.println("=== DB CONFIG ===");
@@ -60,12 +64,13 @@ public class ApiConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        Environment environment = new org.springframework.core.env.StandardEnvironment();
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(environment.getProperty("DB_DDL_AUTO", Boolean.class, false));
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("ovh.bookexchange.api.domains.entities");
-        factory.setDataSource(dataSource());
+        factory.setDataSource(dataSource(environment));
         return factory;
     }
 
@@ -79,7 +84,19 @@ public class ApiConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("https://bookexchange-front.vercel.app"));
+        boolean isProduction = "prod".equals(environment.getProperty("spring.profiles.active", "dev"));
+
+        if (isProduction) {
+            String frontendUrl = environment.getProperty("FRONTEND_URL", "");
+            config.setAllowedOrigins(List.of(frontendUrl));
+            log.info("=== PROFILE PROD ===");
+            log.info("FRONTEND_URL: {}", frontendUrl);
+        } else {
+            config.setAllowedOrigins(List.of("http://localhost:5173"));
+            log.info("=== PROFILE DEV ===");
+            log.info("FRONTEND_URL: http://localhost:5173");
+        }
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
