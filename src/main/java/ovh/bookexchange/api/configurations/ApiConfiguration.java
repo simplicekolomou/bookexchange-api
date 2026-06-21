@@ -76,18 +76,13 @@ public class ApiConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        String isProduction = environment.getProperty("PROFILES_ACTIVE");
+        String profil = environment.getProperty("PROFILES_ACTIVE");
 
-        log.info("Le profil actif est : {}", isProduction);
+        String frontendUrl = "dev".equals(profil) ? "http://localhost:5173" : environment.getProperty("FRONTEND_URL");
 
-        if (isProduction.equals("prod")) {
-            String frontendUrl = environment.getProperty("FRONTEND_URL", "");
-            config.setAllowedOrigins(List.of(frontendUrl));
-            log.info("CORS configuration for production: allowed origins set to {}", frontendUrl);
-        } else {
-            config.setAllowedOrigins(List.of("http://localhost:5173"));
-        }
+        log.info("Configuration CORS : profil={}, frontendUrl={}", profil, frontendUrl);
 
+        config.setAllowedOrigins(List.of(frontendUrl));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
