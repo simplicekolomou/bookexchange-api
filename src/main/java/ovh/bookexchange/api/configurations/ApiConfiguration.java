@@ -45,14 +45,6 @@ public class ApiConfiguration {
         String user = environment.getProperty("PGUSER");
         String pass = environment.getProperty("PGPASSWORD");
 
-        // Log pour voir ce qu'on reçoit
-        System.out.println("=== DB CONFIG ===");
-        System.out.println("PGHOST: " + host);
-        System.out.println("PGPORT: " + port);
-        System.out.println("PGDATABASE: " + db);
-        System.out.println("PGUSER: " + user);
-        System.out.println("=================");
-
         String url = "jdbc:postgresql://" + host + ":" + port + "/" + db;
         DataSourceBuilder<?> dsBuilder = DataSourceBuilder.create();
         dsBuilder.url(url);
@@ -89,12 +81,9 @@ public class ApiConfiguration {
         if (isProduction) {
             String frontendUrl = environment.getProperty("FRONTEND_URL", "");
             config.setAllowedOrigins(List.of(frontendUrl));
-            log.info("=== PROFILE PROD ===");
-            log.info("FRONTEND_URL: {}", frontendUrl);
+            log.info("CORS configuration for production: allowed origins set to {}", frontendUrl);
         } else {
             config.setAllowedOrigins(List.of("http://localhost:5173"));
-            log.info("=== PROFILE DEV ===");
-            log.info("FRONTEND_URL: http://localhost:5173");
         }
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
