@@ -141,9 +141,9 @@ public class MessageController {
     }
 
     @PostMapping("/{messageId}/read")
-    public ResponseEntity<Void> markRead(@PathVariable long messageId, Principal principal) {
+    public ResponseEntity<Long> markRead(@PathVariable long messageId, Principal principal) {
         messageService.markAsRead(messageId, principal.getName());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(messageId);
     }
 
     @PostMapping("/chats/{chatId}/read")
