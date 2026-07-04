@@ -4,10 +4,12 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ovh.bookexchange.api.controllers.representations.messages.ChatRep;
 import ovh.bookexchange.api.controllers.representations.messages.MessageRep;
+import ovh.bookexchange.api.controllers.requestsResponses.ChatRequest;
 import ovh.bookexchange.api.domains.entities.Chat;
 import ovh.bookexchange.api.domains.entities.EndUser;
 import ovh.bookexchange.api.domains.entities.Membership;
@@ -15,6 +17,7 @@ import ovh.bookexchange.api.domains.entities.Message;
 import ovh.bookexchange.api.infrastructures.repos.EndUserRepository;
 import ovh.bookexchange.api.infrastructures.repos.ChatRepository;
 import ovh.bookexchange.api.infrastructures.repos.MessageRepository;
+import ovh.bookexchange.api.services.ChatService;
 
 import java.security.Principal;
 import java.util.List;
@@ -27,15 +30,17 @@ import java.util.stream.Collectors;
 public class ChatController {
 
     private final ChatRepository chatRepo;
+    private final ChatService chatService;
     private final EndUserRepository userRepo;
     private final ModelMapper mapper;
     private final MessageRepository messageRepository;
 
-    public ChatController(ChatRepository chatRepo, EndUserRepository userRepo, ModelMapper mapper, MessageRepository messageRepository) {
+    public ChatController(ChatRepository chatRepo, EndUserRepository userRepo, ModelMapper mapper, MessageRepository messageRepository, ChatService chatService) {
         this.chatRepo = chatRepo;
         this.userRepo = userRepo;
         this.mapper = mapper;
         this.messageRepository = messageRepository;
+        this.chatService = chatService;
     }
 
     @PostMapping
@@ -125,7 +130,7 @@ public class ChatController {
                             -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")));
                     ms.setNotification(mr.isNotification());
                     return ms;
-                }).collect(Collectors.toList())
+                }).toList()
         );
         chat.setName(chatRep.getName());
     }
@@ -139,18 +144,30 @@ public class ChatController {
                 new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Logged in user not found"));
     }
 
-    /*@GetMapping("/one-to-one/{memberId}")
-    public ChatRep getGroupByMembers(@PathVariable Long memberId, Principal principal) {
-        EndUser targetUser = userRepo.findById(memberId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Target user not found"));
-        List<Chat> groups = findUserOr500(principal).getMemberships().stream()
-                .map(Membership::getGroupChat)
-                .filter(groupChat -> groupChat.isMember(targetUser) && groupChat.getMembers().size() == 2)
-                .toList();
+    @GetMapping("/get-chat")
+    public ResponseEntity<ChatRep> getChatByMembers(ChatRequest request, Principal principal) {
 
-        if (groups.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "One-to-one group not found");
+        // --- Validation des entrées ---
+        if (request.getChatType() == null || request.getTargetUserId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "chatType et targetUserId sont requis");
         }
-        return mapper.map(groups.get(0), ChatRep.class);
-    }*/
+
+        EndUser currentUser = findUserOr500(principal);
+
+        // On empêche un utilisateur de chercher un chat "direct" avec lui-même.
+        if (request.getTargetUserId().equals(currentUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Impossible de cibler son propre utilisateur");
+        }
+
+        EndUser targetUser = userRepo.findById(request.getTargetUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Target user not found"));
+
+        Chat chat = chatService.findChatByTypeAndMembersIdIn(
+                request.getChatType(), currentUser.getId(), targetUser.getId());
+
+        if (chat == null) {
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.ok(mapper.map(chat, ChatRep.class));
+    }
 }

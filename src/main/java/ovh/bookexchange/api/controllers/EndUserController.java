@@ -51,7 +51,7 @@ public class EndUserController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public UserRep getCurrentUser(@PathVariable String id) {
+    public ResponseEntity<UserRep> getCurrentUser(@PathVariable String id) {
         long l;
         try {
             l = Long.parseLong(id);
@@ -59,7 +59,7 @@ public class EndUserController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID is not a number");
         }
         EndUser endUser = endUserRepository.findById(l).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
-        return mapper.map(endUser, UserRep.class);
+        return ResponseEntity.ok(mapper.map(endUser, UserRep.class));
     }
 
     /**
@@ -68,8 +68,8 @@ public class EndUserController {
      * !!! seul : firstName, lastName, adress, bio et visible sont modifiables
      * pas besoin d'inclure le reste des champs de UserRep.
      */
-    @PutMapping("/me") //Note à moi-même : Ne plus faire des puts à la place de patch (mauvaise autodoc, implémentation bof).
-    public void updateUser(@Valid @RequestBody UserRep userRep, Principal principal) {
+    @PutMapping("/update-profile") //Note à moi-même : Ne plus faire des puts à la place de patch (mauvaise autodoc, implémentation bof).
+    public ResponseEntity<UserRep> updateUser(@Valid @RequestBody UserRep userRep, Principal principal) {
         String email = principal.getName();
         EndUser endUser = endUserRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         endUser.setFirstName(userRep.getFirstName());
@@ -78,9 +78,10 @@ public class EndUserController {
         endUser.setVisible(userRep.isVisible());
         endUser.setBio(userRep.getBio());
         endUserRepository.save(endUser);
+        return ResponseEntity.ok(mapper.map(endUser, UserRep.class));
     }
 
-    @PutMapping(value = "/me/profile-picture", consumes = {"image/jpeg", "image/png"})
+    @PutMapping(value = "/profile-picture", consumes = {"image/jpeg", "image/png"})
     public void uploadProfileImage(@RequestBody byte[] imageBytes, Principal principal) {
         EndUser endUser = endUserRepository.findByEmail(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
         try {
