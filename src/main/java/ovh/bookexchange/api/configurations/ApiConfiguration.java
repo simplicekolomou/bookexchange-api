@@ -80,8 +80,6 @@ public class ApiConfiguration {
 
         String frontendUrl = "dev".equals(profil) ? "http://localhost:5173" : environment.getProperty("FRONTEND_URL");
 
-        log.info("Configuration CORS : profil={}, frontendUrl={}", profil, frontendUrl);
-
         config.setAllowedOrigins(List.of(frontendUrl));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

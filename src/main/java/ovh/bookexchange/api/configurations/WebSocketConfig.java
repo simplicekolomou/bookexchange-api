@@ -3,7 +3,6 @@ package ovh.bookexchange.api.configurations;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -40,7 +39,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 // Permettre les connexions CORS depuis le client (ex: http://localhost:5173)
                 .setAllowedOrigins(
                         "http://localhost:5173",
-                        "https://bookexchange-front.vercel.app"
+                        "https://bookexchange-snowy.vercel.app/"
                 )
                 .withSockJS();
     }
